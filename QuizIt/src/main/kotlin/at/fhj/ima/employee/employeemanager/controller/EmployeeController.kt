@@ -56,7 +56,7 @@ class EmployeeController(val employeeRepository: EmployeeRepository, val departm
         return  "redirect:listEmployees"//"redirect:/editEmployee?id=" + employee.id
     }
 
-    @RequestMapping(path=["/","/listEmployees"], method = [RequestMethod.GET])
+    @RequestMapping(path=["/listEmployees"], method = [RequestMethod.GET])
     fun listEmployees(model: Model, @RequestParam(required = false) search: String? = null, @RequestParam(required = false) department: Department? = null): String {
         model["employees"] = employeeRepository.findBySearchText(search, department)
         model["departments"] = departmentRepository.findAll()

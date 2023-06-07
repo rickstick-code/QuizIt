@@ -15,18 +15,25 @@
     <link href="/css/custom.css" rel="stylesheet"/>
 </head>
 <body>
-<div class="text-end me-2">
-    <img src="/img/logo.svg" class="mt-2 mb-2">
-</div>
+
 
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container">
-        <a class="navbar-brand" href="/">EmployeeManager</a>
+        <a class="navbar-brand" href="/">QuitIT</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
                 aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+            <div class="navbar-nav">
+                <a class="nav-item nav-link mx-1" href="/">Home</a>
+                <a class="nav-item nav-link mx-1" href="/highscore">Highscore</a>
+                <a class="nav-item nav-link mx-1" href="/customQuiz">Custom Quiz</a>
+                <a class="nav-item nav-link mx-1" href="/settings">Settings</a>
+            </div>
+        </div>
+        <!--
+        Employee dropdown menu for reference
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
                 <c:if test="${activePage == 'listEmployees' or activePage == 'editEmployee'}">
@@ -57,16 +64,12 @@
                 <button class="btn btn-outline-light" type="submit"><i class="bi bi-box-arrow-right"></i> Logout</button>
             </form:form>
         </div>
+        -->
     </div>
 </nav>
 
 
 <div class="container" role="main">
-
-
-    <div class="page-header">
-        <h1>Employee Management</h1>
-    </div>
 
     <!-- Messages ----------------------------------------------------------- -->
 
