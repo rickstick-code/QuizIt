@@ -28,12 +28,14 @@ dependencies {
 	implementation("javax.servlet:jstl")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	implementation("org.springframework.boot:spring-boot-starter-security")
-	//implementation("org.webjars.npm:bootstrapicons:1.8.1")
 
 	implementation("org.webjars:bootstrap:5.1.3")
 
 	implementation("org.springframework.security:spring-security-taglibs")
 	implementation("org.webjars.npm:bootstrap-icons:1.8.1")
+
+	//Api Call
+	implementation("org.springframework.boot:spring-boot-starter-webflux:2.6.4")
 
 
 }
