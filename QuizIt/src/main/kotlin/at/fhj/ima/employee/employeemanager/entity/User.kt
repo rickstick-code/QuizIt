@@ -18,5 +18,9 @@ class User(
         var password: String,
         @Enumerated(EnumType.STRING)
         var role: UserRole,
-        var currentScore: Int = 0 //for when a user is attempting a quiz
+        var currentScore: Int = 0, //for when a user is attempting a quiz
+        @OneToMany
+        var scores: List<Highscore> = listOf(),
+
+
 )

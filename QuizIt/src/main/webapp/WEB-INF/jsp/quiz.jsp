@@ -36,29 +36,54 @@
     <div class="container text-center">
         <h3 class="mt-5">${question.question.text}</h3>
         <p class="mt-2">Difficulty: ${question.difficulty}</p>
+        <!-- old version with answers sorted (Answer A is always right) for testing
         <div class="row justify-content-center">
             <div class="col-4 d-grid">
-                <a type="button" class="btn btn-primary mt-5 btn-lg" href="/quiz" onclick=postScore(50)>${question.correctAnswer}</a>
+                <a type="button" class="btn btn-primary mt-5 btn-lg" href="/quiz" id="AnswerA" onclick=postScore(50)>${question.correctAnswer}</a>
             </div>
             <div class="col-2">
             </div>
             <div class="col-4 d-grid">
-                <a type="button" class="btn btn-primary mt-5 btn-lg" href="/quiz">${question.incorrectAnswers[0]}</a>
+                <a type="button" class="btn btn-primary mt-5 btn-lg" href="/quiz" id="AnswerB">${question.incorrectAnswers[0]}</a>
             </div>
         </div>
         <div class="row justify-content-center">
             <div class="col-4 d-grid">
-                <a type="button" class="btn btn-primary mt-5 btn-lg " href="/quiz">${question.incorrectAnswers[1]}</a>
+                <a type="button" class="btn btn-primary mt-5 btn-lg " href="/quiz" id="AnswerC">${question.incorrectAnswers[1]}</a>
             </div>
             <div class="col-2">
             </div>
             <div class="col-4 d-grid">
-                <a type="button" class="btn btn-primary mt-5 btn-lg" href="/quiz">${question.incorrectAnswers[2]}</a>
+                <a type="button" class="btn btn-primary mt-5 btn-lg" href="/quiz" id="AnswerD">${question.incorrectAnswers[2]}</a>
+            </div>
+        </div> -->
+
+        <!-- new version with random answers -->
+        <div class="row justify-content-center">
+            <div class="col-4 d-grid">
+                <a type="button" class="btn btn-primary mt-5 btn-lg" href="/quiz" id="AnswerA">${answers[0]}</a>
+            </div>
+            <div class="col-2">
+            </div>
+            <div class="col-4 d-grid">
+                <a type="button" class="btn btn-primary mt-5 btn-lg" href="/quiz" id="AnswerB">${answers[1]}</a>
             </div>
         </div>
+        <div class="row justify-content-center">
+            <div class="col-4 d-grid">
+                <a type="button" class="btn btn-primary mt-5 btn-lg " href="/quiz" id="AnswerC">${answers[2]}</a>
+            </div>
+            <div class="col-2">
+            </div>
+            <div class="col-4 d-grid">
+                <a type="button" class="btn btn-primary mt-5 btn-lg" href="/quiz" id="AnswerD">${answers[3]}</a>
+            </div>
+        </div>
+
+
         <div>
 
-            <h4 class="mt-5">Score (not working): ${score}
+            <h4 class="mt-5">Score (not checking wrong answers): ${score}
 
                 <!-- jstl is not working for this, solution: post request to server to update users currentScore (AJAX?)-->
 

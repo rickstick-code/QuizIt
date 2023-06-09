@@ -36,9 +36,16 @@ class ApiQuestionController(val userRepository: UserRepository) {
 
         if (question.question?.text != null) {
             model["question"] = question
+
+
+            val answers = question.incorrectAnswers.plus(question.correctAnswer)
+            val shuffledAnswers = answers.shuffled()
+            model["answers"] = shuffledAnswers
         } else {
-            model["question"] = ApiQuestion(question = Question("Api Error"))
+            model["question"] = ApiQuestion(question = Question("Api Error: Contact Administrators"))
         }
+
+
 
 
         //probably only works with logged-in user (not tested yet)
