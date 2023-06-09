@@ -10,9 +10,12 @@ import org.springframework.ui.Model
 import org.springframework.ui.set
 import org.springframework.web.bind.annotation.ModelAttribute
 import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.ResponseBody
 import org.springframework.web.reactive.function.client.WebClient
 import javax.validation.Valid
 
@@ -28,7 +31,8 @@ class ApiQuestionController(val userRepository: UserRepository) {
         val question: ApiQuestion? = builder.build().get().uri(url).retrieve().bodyToFlux(ApiQuestion::class.java).blockFirst()
 
         System.out.println("----------------------------------------------")
-        System.out.println("Question: " + question!!.question!!.text)
+        System.out.println("Question:   " + question!!.question!!.text)
+        System.out.println("Answer:     " + question.correctAnswer)
 
         if (question.question?.text != null) {
             model["question"] = question
@@ -48,14 +52,16 @@ class ApiQuestionController(val userRepository: UserRepository) {
         return "quiz"
     }
 
-    /*
     @RequestMapping("/updateScore", method = [RequestMethod.POST])
-    fun updateScore(@RequestParam(name = "score",defaultValue = "10") score: Int): String{
+    fun updateScore(@RequestBody score: Int): String{
+        System.out.println("----------------------------------------------")
+        System.out.println(score)
+        System.out.println("----------------------------------------------")
         val points = score.toInt()
         val auth = SecurityContextHolder.getContext().authentication
         userRepository.findByUsernameIgnoreCase(auth.name).currentScore += points
 
         return "redirect:quiz"
     }
-     */
+
 }
