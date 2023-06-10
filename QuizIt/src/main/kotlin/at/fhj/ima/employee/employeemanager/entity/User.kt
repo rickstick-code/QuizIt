@@ -21,6 +21,8 @@ class User(
         var currentScore: Int = 0, //for when a user is attempting a quiz
         @OneToMany
         var scores: List<Highscore> = listOf(),
+        @OneToOne
+        var settings: Settings
 
 
 )
