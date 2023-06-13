@@ -85,7 +85,9 @@
 
             <h4 class="mt-5">Score (not checking wrong answers): ${score}
 
-                <!-- jstl is not working for this, solution: post request to server to update users currentScore (AJAX?)-->
+                <!-- score updating is not working, need post request
+                solution1: hidden field with value (form:hidden)
+                solution2: post request to server to update users currentScore (AJAX?) -> JavaScript-->
 
                 <c:choose>
                     <c:when test="${score != 0}">
