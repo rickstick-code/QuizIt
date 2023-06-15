@@ -31,16 +31,13 @@
                     </thead>
                     <tbody>
                     <c:set var="nr" scope="page" value="1"/>
-                    <c:forEach items="${settings.categories}" var="category">
+                    <c:forEach items="${allCategories}" var="category">
                         <tr>
                             <th scope="row">${nr}</th>
-                            <td>${category.name}</td>
+                            <td>${category}</td>
                             <td>
                                 <div class="d-flex justify-content-center">
-                                    <div class="form-check">
-                                        <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked${nr}" <c:if test="${category.active}">checked</c:if>>
-                                        <label class="form-check-label" for="flexCheckChecked${nr}"></label>
-                                    </div>
+                                        <form:checkbox path="categories" value="${category}"/>
                                 </div>
                             </td>
                         </tr>
@@ -67,5 +64,4 @@
 
         </form:form>
     </div>
-    <p>i hate forms</p>
 </layout:page-container>

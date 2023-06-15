@@ -8,16 +8,17 @@ import javax.persistence.GenerationType
 import javax.persistence.OneToMany
 import javax.persistence.OneToOne
 import javax.persistence.CascadeType
+import javax.persistence.ElementCollection
 
 @Entity
 class Settings(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Int? = null,
-    @OneToOne
+    @OneToOne(cascade = [CascadeType.ALL])
     var user: User? = null,
-    @OneToMany(cascade = [CascadeType.ALL])
-    var categories: MutableList<Category> = mutableListOf<Category>()
+    @ElementCollection
+    var categories: MutableList<String> = mutableListOf()
 ) {
 }
 

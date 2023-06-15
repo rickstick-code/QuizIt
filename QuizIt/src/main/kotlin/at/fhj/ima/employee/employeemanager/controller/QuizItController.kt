@@ -1,9 +1,9 @@
 package at.fhj.ima.employee.employeemanager.controller
 
-import at.fhj.ima.employee.employeemanager.entity.Category
 import at.fhj.ima.employee.employeemanager.entity.Settings
 import at.fhj.ima.employee.employeemanager.repository.SettingsRepository
 import at.fhj.ima.employee.employeemanager.repository.UserRepository
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
@@ -32,41 +32,57 @@ class QuizItController(val settingsRepository: SettingsRepository, val userRepos
     fun showSettings(model: Model): String {
         val auth = SecurityContextHolder.getContext().authentication
         val user = userRepository.findByUsernameIgnoreCase(auth.name)
+
         val usersettings = settingsRepository.findByUser(user)
 
-
-        // all categories available
-        val categories = mutableListOf<Category>()
-        categories.add(Category(name = "music", active = true))
-        categories.add(Category(name = "sport_and_leisure", active = true))
-        categories.add(Category(name = "film_and_tv", active = true))
-        categories.add(Category(name = "arts_and_literature", active = true))
-        categories.add(Category(name = "society_and_culture", active = true))
-        categories.add(Category(name = "science", active = true))
-        categories.add(Category(name = "geography", active = true))
-        categories.add(Category(name = "food_and_drink", active = true))
-        categories.add(Category(name = "general_knowledge", active = true))
-
+        val categories = mutableListOf<String>()
+        categories.add("music")
+        categories.add("sport_and_leisure")
+        categories.add("film_and_tv")
+        categories.add("arts_and_literature")
+        categories.add("society_and_culture")
+        categories.add("science")
+        categories.add("geography")
+        categories.add("food_and_drink")
+        categories.add("general_knowledge")
 
         if (usersettings != null) {
             if (usersettings.categories.isEmpty()) {
                 usersettings.categories.addAll(categories)
             }
-
+            model["allCategories"] = categories
             model["settings"] = usersettings
         } else {
             settingsRepository.save(Settings(user = user, categories = categories))
             model["settings"] = settingsRepository.findByUser(user)!!
+            model["allCategories"] = categories
         }
-
 
         return "settings"
     }
 
     @RequestMapping("/saveSettings",method = [RequestMethod.POST])
     fun saveSettings(@ModelAttribute settings: Settings):String{
+        val auth = SecurityContextHolder.getContext().authentication
+        val user = userRepository.findByUsernameIgnoreCase(auth.name)
 
-        settingsRepository.save(settings)
+        if (!settings.user?.username.isNullOrEmpty()) {
+            user.username = settings.user!!.username
+            userRepository.save(user)
+            val newAuth = UsernamePasswordAuthenticationToken(user.username, auth.credentials, auth.authorities)
+            SecurityContextHolder.getContext().authentication = newAuth
+        }
+
+        val usersettings = settingsRepository.findByUser(user)
+
+        if (usersettings != null) {
+            usersettings.categories = settings.categories
+            settingsRepository.save(usersettings)
+            System.out.println("-------------------Settings saved successfully---------")
+        } else {
+            System.out.println("-------------------No user found---------")
+        }
+
         return "redirect:settings"
     }
 
