@@ -1,6 +1,13 @@
 package at.fhj.ima.employee.employeemanager.entity
 
-import javax.persistence.*
+
+import javax.persistence.Entity
+import javax.persistence.Id
+import javax.persistence.GeneratedValue
+import javax.persistence.GenerationType
+import javax.persistence.OneToMany
+import javax.persistence.OneToOne
+import javax.persistence.CascadeType
 
 @Entity
 class Settings(
@@ -9,7 +16,7 @@ class Settings(
     var id: Int? = null,
     @OneToOne
     var user: User,
-    @OneToMany
+    @OneToMany(cascade = [CascadeType.ALL])
     var categories: MutableList<Category>
 ) {
 }
