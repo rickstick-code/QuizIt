@@ -15,9 +15,9 @@ class Settings(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Int? = null,
     @OneToOne
-    var user: User,
+    var user: User? = null,
     @OneToMany(cascade = [CascadeType.ALL])
-    var categories: MutableList<Category>
+    var categories: MutableList<Category> = mutableListOf<Category>()
 ) {
 }
 

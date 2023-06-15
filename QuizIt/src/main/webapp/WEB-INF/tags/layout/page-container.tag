@@ -32,7 +32,9 @@
                 <a class="nav-item nav-link mx-1" href="/settings">Settings</a>
             </div>
         </div>
-        <!--
+        <a class="btn btn-outline-light" href="/logout"><i class="bi bi-box-arrow-right"></i> Logout</a>
+
+        <%--
         Employee dropdown menu for reference
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
@@ -64,7 +66,7 @@
                 <button class="btn btn-outline-light" type="submit"><i class="bi bi-box-arrow-right"></i> Logout</button>
             </form:form>
         </div>
-        -->
+        --%>
     </div>
 </nav>
 
