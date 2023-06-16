@@ -90,4 +90,9 @@ class QuizItController(val settingsRepository: SettingsRepository, val userRepos
     fun customQuiz(): String {
         return "customQuiz"
     }
+
+    @RequestMapping("/createQuiz", method = [RequestMethod.GET])
+    fun createQuiz(): String {
+        return "createQuiz"
+    }
 }
