@@ -3,8 +3,9 @@ package at.fhj.ima.employee.employeemanager.entity
 import javax.persistence.*
 
 enum class UserRole {
-    ROLE_USER,
-    ROLE_ADMIN
+        ROLE_PREMIUM,
+        ROLE_USER,
+        ROLE_ADMIN
 }
 @Entity
 class User(

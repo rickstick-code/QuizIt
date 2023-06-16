@@ -12,8 +12,12 @@ class EmployeeManagerPrincipal(val user: User) :
     override fun getAuthorities(): MutableCollection<out GrantedAuthority> {
         val roles = mutableListOf<GrantedAuthority>()
         roles.add(SimpleGrantedAuthority(UserRole.ROLE_USER.toString()))
+        if (user.role == UserRole.ROLE_PREMIUM) {
+            roles.add(SimpleGrantedAuthority(UserRole.ROLE_PREMIUM.toString()))
+        }
         if (user.role == UserRole.ROLE_ADMIN){
             roles.add(SimpleGrantedAuthority(UserRole.ROLE_ADMIN.toString()))
+            roles.add(SimpleGrantedAuthority(UserRole.ROLE_PREMIUM.toString()))
         }
         return roles
     }

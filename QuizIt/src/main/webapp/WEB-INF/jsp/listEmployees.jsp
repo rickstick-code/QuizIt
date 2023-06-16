@@ -56,7 +56,7 @@
                         </td>
                         <td>${employee.department.name}</td>
                         <td>
-                            <!--<sec:authorize access="hasAuthority('ROLE_ADMIN')">
+                            <%--<sec:authorize access="hasAuthority('ROLE_ADMIN')">
                             <div class="row">
                                 <a href="editEmployee?id=${employee.id}" class="col btn btn-xs btn-success"><i class="bi bi-pen"></i> Edit</a>
                                 <form method="post" class="col" action="/deleteEmployee?id=${employee.id}">
@@ -65,7 +65,7 @@
                                     </button>
                                 </form>
                             </div>
-                            </sec:authorize>-->
+                            </sec:authorize>--%>
 
                     <sec:authorize access="hasAuthority('ROLE_ADMIN')">
                             <a href="editEmployee?id=${employee.id}" class="col btn btn-xs btn-success"><i class="bi bi-pen"></i>Edit</a>

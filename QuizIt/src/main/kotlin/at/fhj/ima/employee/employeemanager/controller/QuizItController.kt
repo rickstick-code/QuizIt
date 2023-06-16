@@ -1,9 +1,13 @@
 package at.fhj.ima.employee.employeemanager.controller
 
 import at.fhj.ima.employee.employeemanager.entity.Settings
+import at.fhj.ima.employee.employeemanager.entity.User
+import at.fhj.ima.employee.employeemanager.entity.UserRole
 import at.fhj.ima.employee.employeemanager.repository.SettingsRepository
 import at.fhj.ima.employee.employeemanager.repository.UserRepository
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
+import org.springframework.security.core.GrantedAuthority
+import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
@@ -11,6 +15,7 @@ import org.springframework.ui.set
 import org.springframework.web.bind.annotation.ModelAttribute
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.servlet.ModelAndView
 
 
@@ -86,8 +91,35 @@ class QuizItController(val settingsRepository: SettingsRepository, val userRepos
         return "redirect:settings"
     }
 
+    @RequestMapping("/upgradeRole",method = [RequestMethod.GET])
+    fun upgradeRole(): String{
+        val auth = SecurityContextHolder.getContext().authentication
+
+        System.out.println("-------------------BEFORE UPGRADE--------- " + auth.authorities)
+        if ( auth.authorities.size == 1) {
+            val user = userRepository.findByUsernameIgnoreCase(auth.name)
+            user.role = UserRole.ROLE_PREMIUM
+            userRepository.save(user)
+            val newAuthorities: MutableList<GrantedAuthority> = auth.authorities.toMutableList()
+            newAuthorities.add(SimpleGrantedAuthority(UserRole.ROLE_PREMIUM.toString()))
+
+            val newAuth = UsernamePasswordAuthenticationToken(auth.principal, auth.credentials, newAuthorities)
+            SecurityContextHolder.getContext().authentication = newAuth
+            System.out.println("-------------------AFTER UPGRADE--------- " + newAuth.authorities)
+        }
+
+        return "redirect:settings"
+    }
+
+    @RequestMapping("/deleteUser",method = [RequestMethod.GET])
+    fun deleteUser(): String {
+        System.out.println("-------------------USER DELETED--------- ")
+        return "redirect:settings"
+    }
+
     @RequestMapping("/customQuiz", method = [RequestMethod.GET])
     fun customQuiz(): String {
         return "customQuiz"
     }
+
 }
