@@ -18,12 +18,20 @@ class WebSecurityConfiguration {
                 .authorizeRequests()
                 // you anonymous urls here
                 .antMatchers("/login").permitAll()
+                .antMatchers("/quiz").permitAll()
+                .antMatchers("/error").permitAll()
+                .antMatchers("/update-score").permitAll()
+                // Hier werden die Files für Design etc auch erlaubt wenn man nicht eingeloggt ist
+                .antMatchers("/css/**", "/js/**", "/webjars/**").permitAll()
                 //.antMatchers("/anonymous1").permitAll()
                 //.antMatchers("/manager").hasRole(„Manager“)
-                .anyRequest().authenticated()
+                //.anyRequest().authenticated()
+                .anyRequest().permitAll()
                 .and()
                 .formLogin()//.loginPage("/login")
                 .and()
+                    .csrf()
+                    .disable()
                 .rememberMe().key("uniqueAndSecret").userDetailsService(userDetailsService);
         return http.build()
     }

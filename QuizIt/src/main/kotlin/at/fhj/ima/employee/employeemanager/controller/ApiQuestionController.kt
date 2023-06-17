@@ -1,6 +1,7 @@
 package at.fhj.ima.employee.employeemanager.controller
 
 import at.fhj.ima.employee.employeemanager.entity.ApiQuestion
+import at.fhj.ima.employee.employeemanager.entity.Highscore
 import at.fhj.ima.employee.employeemanager.entity.Question
 import at.fhj.ima.employee.employeemanager.entity.User
 import at.fhj.ima.employee.employeemanager.repository.SettingsRepository
@@ -27,23 +28,28 @@ class ApiQuestionController(val userRepository: UserRepository, val settingsRepo
         var url = "https://the-trivia-api.com/v2/questions"
         var categories = "?categories="
 
-        //probably only works with logged-in user (not tested yet)
+
+        // should work with no login either now
         val auth = SecurityContextHolder.getContext().authentication
-        val user = userRepository.findByUsernameIgnoreCase(auth.name)
 
-        // choosing categories (only authenticated users)
+        if(auth.principal != "anonymousUser"){
+            val user = userRepository.findByUsernameIgnoreCase(auth.name)
 
-        val usersettings = settingsRepository.findByUser(user)
-        if (usersettings != null && usersettings.categories.isNotEmpty()){
-            for (cat in usersettings.categories){
-                categories += cat + ","
+            // choosing categories (only authenticated users)
+
+            val usersettings = settingsRepository.findByUser(user)
+            if (usersettings != null && usersettings.categories.isNotEmpty()){
+                for (cat in usersettings.categories){
+                    categories += cat + ","
+                }
+                if (categories.last() == ','){
+                    categories = categories.dropLast(1)
+                }
+                url += categories
+                System.out.println(url)
             }
-            if (categories.last() == ','){
-                categories = categories.dropLast(1)
-            }
-            url += categories
-            System.out.println(url)
         }
+
 
         val question: ApiQuestion? = builder.build().get().uri(url).retrieve().bodyToFlux(ApiQuestion::class.java).blockFirst()
 
@@ -64,21 +70,20 @@ class ApiQuestionController(val userRepository: UserRepository, val settingsRepo
         System.out.println("User:       " + auth.name)
         System.out.println("----------------------------------------------")
 
-        model["userscore"] = user.currentScore
+        model["userscore"] = 0 // hier noch current score von user holen wenns einen gibt
 
         return "quiz"
     }
 
-    @RequestMapping("/updateScore", method = [RequestMethod.POST])
-    fun updateScore(@RequestBody score: Int): String{
-        System.out.println("----------------------------------------------")
-        System.out.println(score)
-        System.out.println("----------------------------------------------")
-        val points = score.toInt()
-        val auth = SecurityContextHolder.getContext().authentication
-        userRepository.findByUsernameIgnoreCase(auth.name).currentScore += points
+    @RequestMapping("/update-score", method = [RequestMethod.POST])
+    @ResponseBody
+    fun updateScore(@RequestParam("score") score: Int, answer:String, model: Model): String {
 
-        return "redirect:quiz"
+        System.out.println("------------------SCORE----------------")
+        println("Score: $score")
+        println("Answer: $answer") //just a random ass answer to test if u can pass parameters
+
+        return "Score updated successfully"
     }
 
 }
