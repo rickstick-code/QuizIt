@@ -31,7 +31,7 @@
                 </div>
             </div>
 
-            <input type="hidden" name="score" value="${score + 1}">
+            <input type="hidden" name="score" value="${score}">
             <input type="hidden" name="answer" value="${question.correctAnswer}">
         </form>
 

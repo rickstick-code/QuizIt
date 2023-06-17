@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseBody
 import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.result.view.RedirectView
+import javax.servlet.http.HttpServletRequest
 import javax.validation.Valid
 
 
@@ -23,11 +25,14 @@ import javax.validation.Valid
 class ApiQuestionController(val userRepository: UserRepository, val settingsRepository: SettingsRepository) {
 
     @RequestMapping("/quiz", method = [RequestMethod.GET])
-    fun getQuestion(model: Model): String {
+    fun getQuestion(request: HttpServletRequest, model: Model): String {
         val builder: WebClient.Builder = WebClient.builder()
         var url = "https://the-trivia-api.com/v2/questions"
         var categories = "?categories="
 
+        // TODO Get a persistent variable!!!!
+        val score: Int = request.session.getAttribute("score") as? Int ?: 0
+        model.addAttribute("score", score)
 
         // should work with no login either now
         val auth = SecurityContextHolder.getContext().authentication
@@ -50,7 +55,7 @@ class ApiQuestionController(val userRepository: UserRepository, val settingsRepo
             }
         }
 
-
+        model["score"] = score
         val question: ApiQuestion? = builder.build().get().uri(url).retrieve().bodyToFlux(ApiQuestion::class.java).blockFirst()
 
         System.out.println("----------------------------------------------")
@@ -70,8 +75,6 @@ class ApiQuestionController(val userRepository: UserRepository, val settingsRepo
         System.out.println("User:       " + auth.name)
         System.out.println("----------------------------------------------")
 
-        model["userscore"] = 0 // hier noch current score von user holen wenns einen gibt
-
         return "quiz"
     }
 
@@ -79,6 +82,7 @@ class ApiQuestionController(val userRepository: UserRepository, val settingsRepo
     @ResponseBody
     fun updateScore(@RequestParam("score") score: Int, answer:String, selectedAnswer:String, model: Model): String {
 
+        // TODO VVVVVVVVVVVVVVVVV
         /*
         Hier musst du dann noch beide values vergleichen Rick
         und du musst schauen wie schwer die Frage war
@@ -91,7 +95,10 @@ class ApiQuestionController(val userRepository: UserRepository, val settingsRepo
         println("Selected: $selectedAnswer")
         System.out.println("------------------SCORE----------------")
 
-        return selectedAnswer
+        model.addAttribute("score", score + 1)
+
+        return "test"
+        //return RedirectView("/quiz")
     }
 
 }
