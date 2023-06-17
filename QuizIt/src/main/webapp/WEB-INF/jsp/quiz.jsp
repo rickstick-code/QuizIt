@@ -9,35 +9,32 @@
         <h3 class="mt-5">${question.question.text}</h3>
         <p class="mt-2">Difficulty: ${question.difficulty}</p>
 
-        <!-- new version with random answers -->
-        <div class="row justify-content-center">
-            <div class="col-4 d-grid">
-                <a type="button" class="btn btn-primary mt-5 btn-lg" href="/quiz" id="AnswerA">${answers[0]}</a>
+        <form action="/update-score" method="post" id="quizForm">
+            <div class="row justify-content-center">
+                <div class="col-4 d-grid">
+                    <button type="submit" class="btn btn-primary mt-5 btn-lg" name="selectedAnswer" value="${answers[0]}">${answers[0]}</button>
+                </div>
+                <div class="col-2">
+                </div>
+                <div class="col-4 d-grid">
+                    <button type="submit" class="btn btn-primary mt-5 btn-lg" name="selectedAnswer" value="${answers[1]}">${answers[1]}</button>
+                </div>
             </div>
-            <div class="col-2">
+            <div class="row justify-content-center">
+                <div class="col-4 d-grid">
+                    <button type="submit" class="btn btn-primary mt-5 btn-lg" name="selectedAnswer" value="${answers[2]}">${answers[2]}</button>
+                </div>
+                <div class="col-2">
+                </div>
+                <div class="col-4 d-grid">
+                    <button type="submit" class="btn btn-primary mt-5 btn-lg" name="selectedAnswer" value="${answers[3]}">${answers[3]}</button>
+                </div>
             </div>
-            <div class="col-4 d-grid">
-                <a type="button" class="btn btn-primary mt-5 btn-lg" href="/quiz" id="AnswerB">${answers[1]}</a>
-            </div>
-        </div>
-        <div class="row justify-content-center">
-            <div class="col-4 d-grid">
-                <a type="button" class="btn btn-primary mt-5 btn-lg " href="/quiz" id="AnswerC">${answers[2]}</a>
-            </div>
-            <div class="col-2">
-            </div>
-            <div class="col-4 d-grid">
-                <a type="button" class="btn btn-primary mt-5 btn-lg" href="/quiz" id="AnswerD">${answers[3]}</a>
-            </div>
-        </div>
 
-        <form action="/update-score" method="post">
             <input type="hidden" name="score" value="${score + 1}">
-            <input type="hidden" name="answer" value="${answers[0]}">
-            <button type="submit" class="btn btn-primary mt-5 btn-lg">Submit</button>
+            <input type="hidden" name="answer" value="${question.correctAnswer}">
         </form>
 
-        <!-- Schauen vielleicht kann man den ganzen spaß weghauen und die logik im Controller machen -->
         <div>
             <h4 class="mt-5">Score (not checking wrong answers): ${score}</h4>
         </div>

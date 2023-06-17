@@ -77,13 +77,21 @@ class ApiQuestionController(val userRepository: UserRepository, val settingsRepo
 
     @RequestMapping("/update-score", method = [RequestMethod.POST])
     @ResponseBody
-    fun updateScore(@RequestParam("score") score: Int, answer:String, model: Model): String {
+    fun updateScore(@RequestParam("score") score: Int, answer:String, selectedAnswer:String, model: Model): String {
 
+        /*
+        Hier musst du dann noch beide values vergleichen Rick
+        und du musst schauen wie schwer die Frage war
+        entsprechend dann scores vergeben(check mal ob du auf die daten zugreifen kannst von get question irgendwie)
+        wenn die person eingeloggt ist musst du dann checken ob der aktuelle score besser ist und ihn replacen
+        */
         System.out.println("------------------SCORE----------------")
         println("Score: $score")
-        println("Answer: $answer") //just a random ass answer to test if u can pass parameters
+        println("Answer: $answer")
+        println("Selected: $selectedAnswer")
+        System.out.println("------------------SCORE----------------")
 
-        return "Score updated successfully"
+        return selectedAnswer
     }
 
 }
