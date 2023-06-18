@@ -60,23 +60,23 @@
 
         <!-- new version with random answers -->
         <div class="row justify-content-center">
-            <div class="col-4 d-grid">
-                <a type="button" class="btn btn-primary mt-5 btn-lg" href="/quiz" id="AnswerA">${answers[0]}</a>
+            <div class="col-md-4 d-grid">
+                <a type="button" class="btn btn-primary mt-md-5 mt-3 btn-lg" href="/quiz" id="AnswerA">${answers[0]}</a>
             </div>
-            <div class="col-2">
+            <div class="col-md-2">
             </div>
-            <div class="col-4 d-grid">
-                <a type="button" class="btn btn-primary mt-5 btn-lg" href="/quiz" id="AnswerB">${answers[1]}</a>
+            <div class="col-md-4 d-grid">
+                <a type="button" class="btn btn-primary mt-md-5 mt-3 btn-lg" href="/quiz" id="AnswerB">${answers[1]}</a>
             </div>
         </div>
         <div class="row justify-content-center">
-            <div class="col-4 d-grid">
-                <a type="button" class="btn btn-primary mt-5 btn-lg " href="/quiz" id="AnswerC">${answers[2]}</a>
+            <div class="col-md-4 d-grid">
+                <a type="button" class="btn btn-primary mt-md-5 mt-3 btn-lg " href="/quiz" id="AnswerC">${answers[2]}</a>
             </div>
-            <div class="col-2">
+            <div class="col-md-2">
             </div>
-            <div class="col-4 d-grid">
-                <a type="button" class="btn btn-primary mt-5 btn-lg" href="/quiz" id="AnswerD">${answers[3]}</a>
+            <div class="col-md-4 d-grid">
+                <a type="button" class="btn btn-primary mt-md-5 mt-3 btn-lg" href="/quiz" id="AnswerD">${answers[3]}</a>
             </div>
         </div>
 
