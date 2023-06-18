@@ -30,13 +30,11 @@
                     <button type="submit" class="btn btn-primary mt-5 btn-lg" name="selectedAnswer" value="${answers[3]}">${answers[3]}</button>
                 </div>
             </div>
-
-            <input type="hidden" name="score" value="${score}">
             <input type="hidden" name="answer" value="${question.correctAnswer}">
         </form>
 
         <div>
-            <h4 class="mt-5">Score (not checking wrong answers): ${score}</h4>
+            <h4 class="mt-5">Score: ${score}</h4>
         </div>
     </div>
 

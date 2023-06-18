@@ -10,11 +10,7 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestMethod
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.bind.annotation.ResponseBody
+import org.springframework.web.bind.annotation.*
 import org.springframework.web.reactive.function.client.WebClient
 import org.springframework.web.reactive.result.view.RedirectView
 import javax.servlet.http.HttpServletRequest
@@ -31,13 +27,12 @@ class ApiQuestionController(val userRepository: UserRepository, val settingsRepo
         var categories = "?categories="
 
         // TODO Get a persistent variable!!!!
-        val score: Int = request.session.getAttribute("score") as? Int ?: 0
-        model.addAttribute("score", score)
+        //val score: Int = model.getAttribute("score") as? Int ?: 0
+        //model.addAttribute("score", score)
 
         // should work with no login either now
         val auth = SecurityContextHolder.getContext().authentication
-
-        if(auth.principal != "anonymousUser"){
+        if(auth.authorities.first().authority != "ROLE_ANONYMOUS"){
             val user = userRepository.findByUsernameIgnoreCase(auth.name)
 
             // choosing categories (only authenticated users)
@@ -52,10 +47,13 @@ class ApiQuestionController(val userRepository: UserRepository, val settingsRepo
                 }
                 url += categories
                 System.out.println(url)
+                model["score"] = user.currentScore
             }
+        } else {
+            model["score"] = "Only available for logged in user!"
         }
 
-        model["score"] = score
+
         val question: ApiQuestion? = builder.build().get().uri(url).retrieve().bodyToFlux(ApiQuestion::class.java).blockFirst()
 
         System.out.println("----------------------------------------------")
@@ -79,8 +77,7 @@ class ApiQuestionController(val userRepository: UserRepository, val settingsRepo
     }
 
     @RequestMapping("/update-score", method = [RequestMethod.POST])
-    @ResponseBody
-    fun updateScore(@RequestParam("score") score: Int, answer:String, selectedAnswer:String, model: Model): String {
+    fun updateScore(answer:String, selectedAnswer:String, model: Model): String  {
 
         // TODO VVVVVVVVVVVVVVVVV
         /*
@@ -89,16 +86,24 @@ class ApiQuestionController(val userRepository: UserRepository, val settingsRepo
         entsprechend dann scores vergeben(check mal ob du auf die daten zugreifen kannst von get question irgendwie)
         wenn die person eingeloggt ist musst du dann checken ob der aktuelle score besser ist und ihn replacen
         */
+
         System.out.println("------------------SCORE----------------")
-        println("Score: $score")
         println("Answer: $answer")
         println("Selected: $selectedAnswer")
         System.out.println("------------------SCORE----------------")
 
-        model.addAttribute("score", score + 1)
+        val auth = SecurityContextHolder.getContext().authentication
 
-        return "test"
-        //return RedirectView("/quiz")
+        if(auth.authorities.first().authority != "ROLE_ANONYMOUS"){
+            val user = userRepository.findByUsernameIgnoreCase(auth.name)
+            user.currentScore = user.currentScore + 10
+            userRepository.save(user)
+            System.out.println("------------------SCORE----------------")
+        } else {
+            model["score"] = "Only available for logged in user!"
+        }
+
+        return  "redirect:quiz"
     }
 
 }
