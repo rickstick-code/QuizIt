@@ -1,5 +1,6 @@
 package at.fhj.ima.employee.employeemanager.controller
 
+import at.fhj.ima.employee.employeemanager.entity.Employee
 import at.fhj.ima.employee.employeemanager.entity.Settings
 import at.fhj.ima.employee.employeemanager.repository.SettingsRepository
 import at.fhj.ima.employee.employeemanager.repository.UserRepository
@@ -11,9 +12,9 @@ import org.springframework.ui.set
 import org.springframework.web.bind.annotation.ModelAttribute
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.servlet.ModelAndView
-
-
+import java.time.LocalDate
 
 
 @Controller
@@ -94,5 +95,10 @@ class QuizItController(val settingsRepository: SettingsRepository, val userRepos
     @RequestMapping("/createQuiz", method = [RequestMethod.GET])
     fun createQuiz(): String {
         return "createQuiz"
+    }
+
+    @RequestMapping("/customQuestion", method = [RequestMethod.GET])
+    fun customQuestion(): String {
+        return "customQuestion"
     }
 }
