@@ -6,8 +6,8 @@ class CustomQuiz(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: String? = null,
-    @Column(nullable = false, unique = true)
-    var quizname: String,
+    @Column(nullable = true, unique = true)
+    var quizname: String = "",
     @OneToMany
     var customQuestions: ArrayList<CustomQuestion> = arrayListOf(),
     @Column(nullable = false, unique = true)

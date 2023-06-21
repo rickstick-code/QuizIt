@@ -1,5 +1,6 @@
 package at.fhj.ima.employee.employeemanager.controller
 
+import at.fhj.ima.employee.employeemanager.entity.CustomQuiz
 import at.fhj.ima.employee.employeemanager.entity.Employee
 import at.fhj.ima.employee.employeemanager.entity.Settings
 import at.fhj.ima.employee.employeemanager.repository.SettingsRepository
@@ -92,13 +93,19 @@ class QuizItController(val settingsRepository: SettingsRepository, val userRepos
         return "customQuiz"
     }
 
+    @RequestMapping("/customQuestion", method = [RequestMethod.GET])
+    fun customQuestion(): String {
+        return "customQuestion"
+    }
+
     @RequestMapping("/createQuiz", method = [RequestMethod.GET])
     fun createQuiz(): String {
         return "createQuiz"
     }
-
-    @RequestMapping("/customQuestion", method = [RequestMethod.GET])
-    fun customQuestion(): String {
-        return "customQuestion"
+    fun createQuiz(model: Model): String {
+        val auth = SecurityContextHolder.getContext().authentication
+        val user = userRepository.findByUsernameIgnoreCase(auth.name)
+        model["quiz"] = CustomQuiz(creator = user)
+        return createQuiz(model)
     }
 }

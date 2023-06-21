@@ -8,10 +8,9 @@
 
     <div class="row">
         <div class="col-md-8 col-md-offset-2">
+            <c:set var="errors" value="${requestScope['org.springframework.validation.BindingResult.customQuiz']}" />
                 <fieldset>
                     <legend>Create Custom Quiz</legend>
-
-                    <form id="quizForm" action="submitQuiz" method="post" onsubmit="validateForm(event)">
 
                     <div class="mb-3">
                         "*" marks mandatory fields
@@ -269,30 +268,9 @@
                         <button type="submit" class="btn btn-primary">Submit</button>
                         <a href="customQuiz" class="btn btn-default">Cancel</a>
                     </div>
-                    </form>
+
                 </fieldset>
         </div>
     </div>
-
-    <script>
-        function validateForm(event) {
-            var question1 = document.getElementById('inputQuestion1');
-            var question2 = document.getElementById('inputQuestion2');
-            var question3 = document.getElementById('inputQuestion3');
-
-            if (question1.value === '' || question2.value === '' || question3.value === '') {
-                event.preventDefault();
-                alert('The first three questions are mandatory.');
-
-                if (question1.value === '') {
-                    question1.focus();
-                } else if (question2.value === '') {
-                    question2.focus();
-                } else {
-                    question3.focus();
-                }
-            }
-        }
-    </script>
 
 </layout:page-container>
