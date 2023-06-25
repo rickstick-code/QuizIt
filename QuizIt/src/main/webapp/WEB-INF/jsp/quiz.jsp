@@ -31,6 +31,7 @@
                 </div>
             </div>
             <input type="hidden" name="answer" value="${question.correctAnswer}">
+            <input type="hidden" name="difficulty" value="${question.difficulty}">
         </form>
 
         <div>

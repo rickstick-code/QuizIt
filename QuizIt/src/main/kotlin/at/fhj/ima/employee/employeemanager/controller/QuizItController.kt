@@ -3,6 +3,7 @@ package at.fhj.ima.employee.employeemanager.controller
 import at.fhj.ima.employee.employeemanager.entity.Settings
 import at.fhj.ima.employee.employeemanager.entity.User
 import at.fhj.ima.employee.employeemanager.entity.UserRole
+import at.fhj.ima.employee.employeemanager.repository.HighscoreRepository
 import at.fhj.ima.employee.employeemanager.repository.SettingsRepository
 import at.fhj.ima.employee.employeemanager.repository.UserRepository
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
@@ -22,7 +23,7 @@ import org.springframework.web.servlet.ModelAndView
 
 
 @Controller
-class QuizItController(val settingsRepository: SettingsRepository, val userRepository: UserRepository) {
+class QuizItController(val settingsRepository: SettingsRepository, val userRepository: UserRepository, val highscoreRepository : HighscoreRepository) {
 
     @RequestMapping(path=["/", "/home"], method = [RequestMethod.GET])
     fun home(): String {
@@ -30,7 +31,9 @@ class QuizItController(val settingsRepository: SettingsRepository, val userRepos
     }
 
     @RequestMapping("/highscore", method = [RequestMethod.GET])
-    fun listHighscores(): String {
+    fun listHighscores(model: Model): String {
+        model["highscores"] = highscoreRepository.findAll()
+
         return "highscore"
     }
     @RequestMapping("/settings", method = [RequestMethod.GET])
@@ -38,31 +41,32 @@ class QuizItController(val settingsRepository: SettingsRepository, val userRepos
         val auth = SecurityContextHolder.getContext().authentication
         val user = userRepository.findByUsernameIgnoreCase(auth.name)
 
-        val usersettings = settingsRepository.findByUser(user)
+        if(auth.authorities.first().authority != "ROLE_ANONYMOUS") {
+            val usersettings = settingsRepository.findByUser(user)
 
-        val categories = mutableListOf<String>()
-        categories.add("music")
-        categories.add("sport_and_leisure")
-        categories.add("film_and_tv")
-        categories.add("arts_and_literature")
-        categories.add("society_and_culture")
-        categories.add("science")
-        categories.add("geography")
-        categories.add("food_and_drink")
-        categories.add("general_knowledge")
+            val categories = mutableListOf<String>()
+            categories.add("music")
+            categories.add("sport_and_leisure")
+            categories.add("film_and_tv")
+            categories.add("arts_and_literature")
+            categories.add("society_and_culture")
+            categories.add("science")
+            categories.add("geography")
+            categories.add("food_and_drink")
+            categories.add("general_knowledge")
 
-        if (usersettings != null) {
-            if (usersettings.categories.isEmpty()) {
-                usersettings.categories.addAll(categories)
+            if (usersettings != null) {
+                if (usersettings.categories.isEmpty()) {
+                    usersettings.categories.addAll(categories)
+                }
+                model["allCategories"] = categories
+                model["settings"] = usersettings
+            } else {
+                settingsRepository.save(Settings(user = user, categories = categories))
+                model["settings"] = settingsRepository.findByUser(user)!!
+                model["allCategories"] = categories
             }
-            model["allCategories"] = categories
-            model["settings"] = usersettings
-        } else {
-            settingsRepository.save(Settings(user = user, categories = categories))
-            model["settings"] = settingsRepository.findByUser(user)!!
-            model["allCategories"] = categories
         }
-
         return "settings"
     }
 

@@ -20,6 +20,7 @@ class WebSecurityConfiguration {
                 .antMatchers("/login").permitAll()
                 .antMatchers("/quiz").permitAll()
                 .antMatchers("/error").permitAll()
+                .antMatchers("/signin").permitAll()
                 .antMatchers("/update-score").permitAll()
                 // Hier werden die Files für Design etc auch erlaubt wenn man nicht eingeloggt ist
                 .antMatchers("/css/**", "/js/**", "/webjars/**").permitAll()

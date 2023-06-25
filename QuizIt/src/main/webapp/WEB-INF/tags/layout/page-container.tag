@@ -28,11 +28,20 @@
             <div class="navbar-nav">
                 <a class="nav-item nav-link mx-1" href="/">Home</a>
                 <a class="nav-item nav-link mx-1" href="/highscore">Highscore</a>
-                <a class="nav-item nav-link mx-1" href="/customQuiz">Custom Quiz</a>
-                <a class="nav-item nav-link mx-1" href="/settings">Settings</a>
+                <sec:authorize access="not hasAuthority('ROLE_ANONYMOUS')">
+                    <a class="nav-item nav-link mx-1" href="/customQuiz">Custom Quiz</a>
+                    <a class="nav-item nav-link mx-1" href="/settings">Settings</a>
+                </sec:authorize>
             </div>
         </div>
-        <a class="btn btn-outline-light" href="/logout"><i class="bi bi-box-arrow-right"></i> Logout</a>
+        <sec:authorize access="not hasAuthority('ROLE_ANONYMOUS')">
+            <a class="btn btn-outline-light" href="/logout"><i class="bi bi-box-arrow-right"></i> Logout</a>
+        </sec:authorize>
+        <sec:authorize access="hasAuthority('ROLE_ANONYMOUS')">
+            <a class="btn btn-outline-light" href="/login"><i class="bi bi-box-arrow-right"></i> Login</a>
+            <a class="btn btn-outline-light" href="/signin"><i class="bi bi-box-arrow-right"></i> Sign-in</a>
+        </sec:authorize>
+
 
         <%--
         Employee dropdown menu for reference
