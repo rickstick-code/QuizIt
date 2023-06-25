@@ -10,16 +10,13 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
-import org.springframework.web.bind.annotation.ModelAttribute
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestMethod
-import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.ModelAndView
 import java.time.LocalDate
 
 
 @Controller
-class QuizItController(val settingsRepository: SettingsRepository, val userRepository: UserRepository) {
+class QuizItController(val settingsRepository: SettingsRepository, val userRepository: UserRepository, /*val customQuizRepository:CustomQuizRepository*/) {
 
     @RequestMapping(path=["/", "/home"], method = [RequestMethod.GET])
     fun home(): String {
@@ -108,4 +105,10 @@ class QuizItController(val settingsRepository: SettingsRepository, val userRepos
         model["quiz"] = CustomQuiz(creator = user)
         return createQuiz(model)
     }
+
+    /*@PostMapping("/submitQuiz")
+    fun submitQuizForm(@ModelAttribute customQuiz: CustomQuiz): String {
+        customQuizRepository.save(customQuiz)
+        return "redirect:/quizSubmitted"
+    }*/
 }
