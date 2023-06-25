@@ -10,16 +10,13 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
 import org.springframework.web.bind.annotation.ModelAttribute
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
-import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.servlet.ModelAndView
-
-
 
 
 @Controller
@@ -117,7 +114,7 @@ class QuizItController(val settingsRepository: SettingsRepository, val userRepos
 
     @RequestMapping("/deleteUser",method = [RequestMethod.GET])
     fun deleteUser(): String {
-        System.out.println("-------------------USER DELETED--------- ")
+        println("-------------------USER DELETED--------- ")
         return "redirect:settings"
     }
 
@@ -126,4 +123,14 @@ class QuizItController(val settingsRepository: SettingsRepository, val userRepos
         return "customQuiz"
     }
 
+    @RequestMapping("/register", method = [RequestMethod.GET])
+    fun register(): String {
+        return "register"
+    }
+
+    @RequestMapping("/get-register", method = [RequestMethod.POST])
+    fun getRegister(username:String, password:String, email:String, model: Model): String  {
+        userRepository.save(User(username = username, email = email, password = BCryptPasswordEncoder().encode(password) , role = UserRole.ROLE_USER))
+        return  "redirect:login"
+    }
 }

@@ -39,7 +39,7 @@
         </sec:authorize>
         <sec:authorize access="hasAuthority('ROLE_ANONYMOUS')">
             <a class="btn btn-outline-light" href="/login"><i class="bi bi-box-arrow-right"></i> Login</a>
-            <a class="btn btn-outline-light" href="/signin"><i class="bi bi-box-arrow-right"></i> Sign-in</a>
+            <a class="btn btn-outline-light" href="/register"><i class="bi bi-box-arrow-right"></i> Sign-in</a>
         </sec:authorize>
 
 
