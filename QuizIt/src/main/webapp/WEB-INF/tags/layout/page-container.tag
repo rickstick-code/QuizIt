@@ -44,15 +44,18 @@
                         <a class="nav-link mx-1" href="/settings">Settings</a>
                     </li>
                     </sec:authorize>
+                    <sec:authorize access="hasAuthority('ROLE_ANONYMOUS')">
+                    <li style="width: 100%;"></li>
+                    <li class="nav-item" style="white-space: nowrap;">
+                        <a class="btn btn-outline-light" href="/login"><i class="bi bi-box-arrow-right"></i> Login</a>
+                    </li>
+                    <li class="nav-item" style="white-space: nowrap;">
+                        <a class="btn btn-outline-light" href="/register"><i class="bi bi-box-arrow-right"></i> Sign-in</a>
+                    </li>
+                    </sec:authorize>
                 </ul>
             </div>
-            <sec:authorize access="not hasAuthority('ROLE_ANONYMOUS')">
-            <a class="btn btn-outline-light" href="/logout"><i class="bi bi-box-arrow-right"></i> Logout</a>
-            </sec:authorize>
-            <sec:authorize access="hasAuthority('ROLE_ANONYMOUS')">
-                <a class="btn btn-outline-light" href="/login"><i class="bi bi-box-arrow-right"></i> Login</a>
-                <a class="btn btn-outline-light" href="/register"><i class="bi bi-box-arrow-right"></i> Sign-in</a>
-            </sec:authorize>
+
         </div>
     </div>
 </nav>
