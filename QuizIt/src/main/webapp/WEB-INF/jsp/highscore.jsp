@@ -8,7 +8,7 @@
     <div class="container text-center">
         <h1 class="mt-5">Highscores</h1>
         <div class="row justify-content-center mt-5">
-            <div class="col-4">
+            <div class="col-md-4">
                 <table class="table table-striped text-start">
                     <thead>
                     <tr>
@@ -33,7 +33,7 @@
 
         </div>
         <div class="row justify-content-center">
-            <div class="col-4 d-grid">
+            <div class="col-md-4 d-grid">
                 <button class="btn-primary btn-lg btn mt-5">Download Highscores</button>
             </div>
         </div>

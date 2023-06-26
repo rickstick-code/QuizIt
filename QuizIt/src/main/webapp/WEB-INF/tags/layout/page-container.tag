@@ -13,72 +13,49 @@
     <title>${title}</title>
     <bootstrap:bootstrap-css/>
     <link href="/css/custom.css" rel="stylesheet"/>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
 </head>
 <body>
 
-
-<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<nav class="navbar navbar-dark bg-dark navbar-expand-md">
     <div class="container">
         <a class="navbar-brand" href="/">QuizIT</a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
-                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasDarkNavbar" aria-controls="offcanvasDarkNavbar" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
-            <div class="navbar-nav">
-                <a class="nav-item nav-link mx-1" href="/">Home</a>
-                <a class="nav-item nav-link mx-1" href="/highscore">Highscore</a>
-                <sec:authorize access="not hasAuthority('ROLE_ANONYMOUS')">
-                    <a class="nav-item nav-link mx-1" href="/customQuiz">Custom Quiz</a>
-                    <a class="nav-item nav-link mx-1" href="/settings">Settings</a>
-                </sec:authorize>
+        <div class="offcanvas offcanvas-end text-bg-dark" tabindex="-1" id="offcanvasDarkNavbar" aria-labelledby="offcanvasDarkNavbarLabel">
+            <div class="offcanvas-header">
+                <h5 class="offcanvas-title" id="offcanvasDarkNavbarLabel">QuizIT</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
             </div>
-        </div>
-        <sec:authorize access="not hasAuthority('ROLE_ANONYMOUS')">
+            <div class="offcanvas-body">
+                <ul class="navbar-nav justify-content-start flex-grow-1 pe-3">
+                    <li class="nav-item">
+                        <a class="nav-link mx-1" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link mx-1" href="/highscore">Highscore</a>
+                    </li>
+                    <sec:authorize access="not hasAuthority('ROLE_ANONYMOUS')">
+                    <li class="nav-item">
+                        <a class="nav-link mx-1" href="/customQuiz">Custom Quiz</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link mx-1" href="/settings">Settings</a>
+                    </li>
+                    </sec:authorize>
+                </ul>
+            </div>
+            <sec:authorize access="not hasAuthority('ROLE_ANONYMOUS')">
             <a class="btn btn-outline-light" href="/logout"><i class="bi bi-box-arrow-right"></i> Logout</a>
-        </sec:authorize>
-        <sec:authorize access="hasAuthority('ROLE_ANONYMOUS')">
-            <a class="btn btn-outline-light" href="/login"><i class="bi bi-box-arrow-right"></i> Login</a>
-            <a class="btn btn-outline-light" href="/register"><i class="bi bi-box-arrow-right"></i> Sign-in</a>
-        </sec:authorize>
-
-
-        <%--
-        Employee dropdown menu for reference
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mr-auto">
-                <c:if test="${activePage == 'listEmployees' or activePage == 'editEmployee'}">
-                    <c:set var="employeesMenuActive">active</c:set>
-                </c:if>
-                <li class="nav-item ${employeesMenuActive} dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
-                       data-bs-toggle="dropdown"
-                       aria-haspopup="true" aria-expanded="false">
-                        Employee
-                    </a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <a class="dropdown-item" href="/listEmployees">List Employee</a>
-                        <sec:authorize access="hasAuthority('ROLE_ADMIN')">
-                            <a class="dropdown-item" href="/editEmployee">Create
-                                Employee</a>
-                        </sec:authorize>
-                    </div>
-                </li>
-            </ul>
-
-            <ul class="navbar-nav ms-auto">
-                <li class="nav-item">
-                    <span class="nav-link"><i class="bi bi-person"></i><c:out value="${currentUser}"/></span>
-                </li>
-            </ul>
-            <form:form method="post" class="d-flex" action="/logout">
-                <button class="btn btn-outline-light" type="submit"><i class="bi bi-box-arrow-right"></i> Logout</button>
-            </form:form>
+            </sec:authorize>
+            <sec:authorize access="hasAuthority('ROLE_ANONYMOUS')">
+                <a class="btn btn-outline-light" href="/login"><i class="bi bi-box-arrow-right"></i> Login</a>
+                <a class="btn btn-outline-light" href="/register"><i class="bi bi-box-arrow-right"></i> Sign-in</a>
+            </sec:authorize>
         </div>
-        --%>
     </div>
 </nav>
-
 
 <div class="container" role="main">
 
@@ -106,6 +83,5 @@
     <jsp:doBody/>
 </div>
 <bootstrap:bootstrap-js/>
-<script src="/js/custom.js"></script>
 </body>
 </html>

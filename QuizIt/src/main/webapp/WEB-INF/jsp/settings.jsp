@@ -15,14 +15,14 @@
         <form:form modelAttribute="settings" method="post" action="saveSettings">
 
         <div class="row justify-content-center">
-            <div class="mt-5 col-4">
+            <div class="mt-3 col-md-4">
                 <label for="inputUsername" class="form-label">Username</label>
                 <form:input path="user.username" class="form-control" id="inputUsername" type="text"/>
             </div>
         </div>
 
-        <div class="row justify-content-center mt-5">
-            <div class="col-5">
+        <div class="row justify-content-center mt-3">
+            <div class="col-md-6">
                 <table class="table table-striped text-start">
                     <thead>
                     <tr>
@@ -50,19 +50,20 @@
             </div>
         </div>
             <sec:authorize access="!hasAuthority('ROLE_PREMIUM')">
-        <div class="row justify-content-center mt-5">
-            <div class="col-4 d-grid">
+        <div class="row justify-content-center mt-3">
+            <div class="col-md-6 d-grid">
                 <a class="btn btn-success" type="button" href="/upgradeRole">Upgrade to Premium</a>
             </div>
         </div>
             </sec:authorize>
-        <div class="row justify-content-center mt-3">
-            <div class="col-2 d-grid">
-                <!-- not working with modal <a href="/deleteUser" type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#confirmDeleteUser">Delete User</a> -->
-                <a href="/deleteUser" type="button" class="btn btn-danger">Delete User</a>
+        <div class="row justify-content-center">
+            <div class="col-md-2 d-grid mt-2">
+                <button data-href="/deleteUser" data-bs-toggle="modal" data-bs-target="#confirmDelete" type="button" class="btn btn-danger">Delete User</button>
             </div>
-
-            <div class="col-2 d-grid">
+            <div class="col-md-2 d-grid mt-2">
+                <a class="btn btn-secondary" type="button" href="/logout">Logout</a>
+            </div>
+            <div class="col-md-2 d-grid mt-2">
                 <button class="btn btn-primary" type="submit">Save</button>
             </div>
         </div>
@@ -71,15 +72,20 @@
     </div>
 
     <!-- Modal -->
-    <div class="modal fade" id="confirmDeleteUser" tabindex="-1" aria-labelledby="deleteUserLabel" aria-hidden="true">
+    <div class="modal fade" id="confirmDelete" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="deleteUserLabel">Attention!</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Deleting User Account</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    Do your really want to delete this employee?
+                    <p>
+                        Do your really want to delete your Account?
+                    </p>
+                    <p>
+                        There is no coming back!
+                    </p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
@@ -88,5 +94,6 @@
             </div>
         </div>
     </div>
+    <script src="/js/custom.js"></script>
 
 </layout:page-container>
