@@ -47,12 +47,12 @@
                 </thead>
                 <tbody>
                 <!--  list all quizes ----------------------------------------------------------- -->
-                <c:forEach items="${quizes}" var="customQuiz">
+                <c:forEach items="${customQuiz}" var="customQuiz">
                     <tr>
                         <td>${customQuiz.id}</td>
                         <td>${customQuiz.quizname}</td>
                         <td>${fn:length(customQuiz.customQuestions)}</td>
-                        <td>${customQuiz.creator}</td>
+                        <td>${customQuiz.creator.username}</td>
                         <td>
                             <div class="row">
                                 <a href="customQuestion.jsp?id=${customQuiz.id}" class="col btn btn-xs btn-success"><i class="bi bi-pen"></i>Play</a>

@@ -2,6 +2,7 @@ package at.fhj.ima.employee.employeemanager.entity
 
 import java.io.Serializable
 import javax.persistence.*
+import javax.validation.constraints.Size
 
 @Entity
 class CustomQuiz(
@@ -9,9 +10,10 @@ class CustomQuiz(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Int? = null,
     @Column(nullable = true, unique = true)
+    @field:Size(min = 2, max = 240)
     var quizname: String = "",
-    @OneToMany
-    var customQuestions: List<CustomQuestion> = listOf(),
+    @OneToMany(cascade= [CascadeType.ALL])
+    var customQuestions: MutableList<CustomQuestion> = mutableListOf(),
     @ManyToOne
     var creator: User? = null
 ) : Comparable<CustomQuiz>, Serializable {

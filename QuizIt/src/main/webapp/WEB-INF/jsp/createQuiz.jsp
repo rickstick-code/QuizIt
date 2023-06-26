@@ -11,27 +11,31 @@
     <div class="row">
         <div class="col-md-8 col-md-offset-2">
             <c:set var="errors" value="${requestScope['org.springframework.validation.BindingResult.customQuiz']}" />
-
+                <%--@elvariable id="customQuiz" type="at.fhj.ima.employee.employeemanager.entity.CustomQuiz"--%>
             <form:form modelAttribute="customQuiz" method="post" action="changeQuiz">
 
             <fieldset>
                 <legend>Create Custom Quiz</legend>
-
-                <form id="quizForm" action="submitQuiz" method="post" onsubmit="validateForm(event)">
-
+                <form:hidden path="creator.id" value="${customQuiz.creator.id}"/>
                     <div class="mb-3">
-                        "*" marks mandatory fields
+                        all fields are mandatory
                     </div>
 
                     <div class="mb-3">
-                        <label for="inputQuizName" class="form-label">Quiz Name*</label>
-                        <input type="text" class="form-control" id="inputQuizName" aria-describedby="Name" placeholder="Give your Quiz a name" name="quizname" value="">
+                        <label for="inputQuizName" class="form-label">Quiz Name</label>
+                        <form:input path="quizname" class="form-control ${errors.hasFieldErrors('quizname') ? 'is-invalid' : ''}"
+                                    id="inputQuizName" type="text" placeholder="Give your Quiz a name" readonly="${not empty customQuiz.quizname}"/>
+                        <form:errors path="quizname" cssClass="invalid-feedback" />
                     </div>
 
-                    <c:forEach var="questionIndex" begin="1" end="9">
+                    <c:forEach var="questionIndex" begin="0" end="4">
+
                         <div class="mb-3">
-                            <label for="inputQuestion${questionIndex}" class="form-label">Question ${questionIndex}<c:if test="${questionIndex <= 3}">*</c:if></label>
-                            <input type="text" class="form-control" id="inputQuestion${questionIndex}" aria-describedby="Question${questionIndex}" placeholder="Your Question here" name="customQuestions[${questionIndex - 1}].questionText">
+
+                            <label for="inputQuestion${questionIndex}" class="form-label">Question ${questionIndex+1}</label>
+                            <form:input path="customQuestions[${questionIndex}].question" class="form-control ${errors.hasFieldErrors('customQuestion.question') ? 'is-invalid' : ''}"
+                                        id="inputQuestion${questionIndex}" type="text" placeholder="Your Question here" readonly="${not empty customQuestion.question}"/>
+                            <form:errors path="customQuestions[${questionIndex}].question" cssClass="invalid-feedback" />
                             <table class="table table-borderless">
                                 <tr>
                                     <td>Correct Answer</td>
@@ -41,16 +45,24 @@
                                 </tr>
                                 <tr>
                                     <td>
-                                        <input type="text" class="form-control" id="inputCA${questionIndex}" aria-describedby="CA${questionIndex}" name="customQuestions[${questionIndex - 1}].correctAnswer">
+                                        <form:input path="customQuestions[${questionIndex}].correctAnswer" class="form-control ${errors.hasFieldErrors('customQuestion.correctAnswer') ? 'is-invalid' : ''}"
+                                                    id="inputCA${questionIndex}" type="text" readonly="${not empty customQuestion.correctAnswer}"/>
+                                        <form:errors path="customQuestions[${questionIndex}].correctAnswer" cssClass="invalid-feedback" />
                                     </td>
                                     <td>
-                                        <input type="text" class="form-control" id="inputWA${questionIndex}a" aria-describedby="WA${questionIndex}a" name="customQuestions[${questionIndex - 1}].incorrectAnswers[0]">
+                                        <form:input path="customQuestions[${questionIndex}].incorrectAnswer1" class="form-control ${errors.hasFieldErrors('customQuestion.incorrectAnswer1') ? 'is-invalid' : ''}"
+                                                    id="inputWA${questionIndex}a" type="text" readonly="${not empty customQuestion.incorrectAnswer1}"/>
+                                        <form:errors path="customQuestions[${questionIndex}].incorrectAnswer1" cssClass="invalid-feedback" />
                                     </td>
                                     <td>
-                                        <input type="text" class="form-control" id="inputWA${questionIndex}b" aria-describedby="WA${questionIndex}b" name="customQuestions[${questionIndex - 1}].incorrectAnswers[1]">
+                                        <form:input path="customQuestions[${questionIndex}].incorrectAnswer2" class="form-control ${errors.hasFieldErrors('customQuestion.incorrectAnswer2') ? 'is-invalid' : ''}"
+                                                    id="inputWA${questionIndex}b" type="text" readonly="${not empty customQuestion.incorrectAnswer2}"/>
+                                        <form:errors path="customQuestions[${questionIndex}].incorrectAnswer2" cssClass="invalid-feedback" />
                                     </td>
                                     <td>
-                                        <input type="text" class="form-control" id="inputWA${questionIndex}c" aria-describedby="WA${questionIndex}c" name="customQuestions[${questionIndex - 1}].incorrectAnswers[2]">
+                                        <form:input path="customQuestions[${questionIndex}].incorrectAnswer3" class="form-control ${errors.hasFieldErrors('customQuestion.incorrectAnswer3') ? 'is-invalid' : ''}"
+                                                    id="inputWA${questionIndex}c" type="text" readonly="${not empty customQuestion.incorrectAnswer3}"/>
+                                        <form:errors path="customQuestions[${questionIndex}].incorrectAnswer3" cssClass="invalid-feedback" />
                                     </td>
                                 </tr>
                             </table>
@@ -61,52 +73,11 @@
                         <button type="submit" class="btn btn-primary">Submit</button>
                         <a href="customQuiz" class="btn btn-default">Cancel</a>
                     </div>
-                </form>
             </fieldset>
             </form:form>
         </div>
     </div>
 
-    <script>
-        function validateForm(event) {
-            var quizNameInput = document.getElementById('inputQuizName');
-            var isValid = true;
 
-            if (quizNameInput.value === '') {
-                isValid = false;
-                quizNameInput.classList.add('is-invalid');
-            } else {
-                quizNameInput.classList.remove('is-invalid');
-            }
-
-            for (var i = 1; i <= 3; i++) {
-                var questionInput = document.getElementById('inputQuestion' + i);
-                var caInput = document.getElementById('inputCA' + i);
-                var wa1Input = document.getElementById('inputWA' + i + 'a');
-                var wa2Input = document.getElementById('inputWA' + i + 'b');
-                var wa3Input = document.getElementById('inputWA' + i + 'c');
-
-                if (questionInput.value === '' || caInput.value === '' || wa1Input.value === '' || wa2Input.value === '' || wa3Input.value === '') {
-                    isValid = false;
-                    questionInput.classList.add('is-invalid');
-                    caInput.classList.add('is-invalid');
-                    wa1Input.classList.add('is-invalid');
-                    wa2Input.classList.add('is-invalid');
-                    wa3Input.classList.add('is-invalid');
-                } else {
-                    questionInput.classList.remove('is-invalid');
-                    caInput.classList.remove('is-invalid');
-                    wa1Input.classList.remove('is-invalid');
-                    wa2Input.classList.remove('is-invalid');
-                    wa3Input.classList.remove('is-invalid');
-                }
-            }
-
-            if (!isValid) {
-                event.preventDefault();
-                alert('Please fill in all the mandatory fields');
-            }
-        }
-    </script>
 
 </layout:page-container>

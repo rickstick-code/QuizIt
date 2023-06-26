@@ -1,8 +1,6 @@
 package at.fhj.ima.employee.employeemanager.controller
 
-import at.fhj.ima.employee.employeemanager.entity.CustomQuiz
-import at.fhj.ima.employee.employeemanager.entity.Employee
-import at.fhj.ima.employee.employeemanager.entity.Settings
+import at.fhj.ima.employee.employeemanager.entity.*
 import at.fhj.ima.employee.employeemanager.repository.CustomQuizRepository
 import at.fhj.ima.employee.employeemanager.repository.SettingsRepository
 import at.fhj.ima.employee.employeemanager.repository.UserRepository
@@ -89,9 +87,15 @@ class QuizItController(val settingsRepository: SettingsRepository, val userRepos
 
         return "redirect:settings"
     }
-
+/*
     @RequestMapping("/customQuiz", method = [RequestMethod.GET])
     fun customQuiz(): String {
+        return "customQuiz"
+    }
+    */
+    @RequestMapping(path=["/customQuiz"], method = [RequestMethod.GET])
+    fun customQuiz(model: Model,@RequestParam(required = false) customQuiz: CustomQuiz? = null): String {
+        model["customQuiz"] = customQuizRepository.findAll()
         return "customQuiz"
     }
 
@@ -114,6 +118,7 @@ class QuizItController(val settingsRepository: SettingsRepository, val userRepos
     }
 
     private fun populateCreateCustomQuizView(model: Model): String {
+
         return "createQuiz"
     }
 
@@ -124,9 +129,13 @@ class QuizItController(val settingsRepository: SettingsRepository, val userRepos
             return populateCreateCustomQuizView(model)
         }
         try {
+            for (q in customQuiz.customQuestions) {
+                q.motherQuiz = customQuiz
+            }
+
             customQuizRepository.save(customQuiz)
         } catch (e: DataIntegrityViolationException) {
-            model["errorMessage"] = "Could not store quiz, DataIntegrityViolationException"
+            model["errorMessage"] = "Could not store quiz, the quiz name already exists"
             return populateCreateCustomQuizView(model)
         } catch (e: Exception) {
             model["errorMessage"] = e.message ?: "Could not store quiz"
