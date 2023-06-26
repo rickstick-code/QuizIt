@@ -1,5 +1,6 @@
 package at.fhj.ima.employee.employeemanager.entity
 
+import javax.persistence.CascadeType
 import javax.persistence.Entity
 import javax.persistence.GeneratedValue
 import javax.persistence.GenerationType
@@ -13,7 +14,7 @@ class Highscore(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Int? = null,
     var score: Int? = null,
-    @ManyToOne
+    @ManyToOne(cascade = [CascadeType.REMOVE])
     var user: User? = null
 ) {
 }

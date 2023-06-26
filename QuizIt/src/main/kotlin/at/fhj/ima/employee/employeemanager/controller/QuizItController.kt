@@ -24,12 +24,19 @@ class QuizItController(val settingsRepository: SettingsRepository, val userRepos
 
     @RequestMapping(path=["/", "/home"], method = [RequestMethod.GET])
     fun home(): String {
+        val auth = SecurityContextHolder.getContext().authentication
+
+        if(auth.authorities.first().authority != "ROLE_ANONYMOUS") {
+            if(settingsRepository.findByUser(userRepository.findByUsernameIgnoreCase(auth.name)) == null){
+                return "redirect:settings"
+            }
+        }
         return "home"
     }
 
     @RequestMapping("/highscore", method = [RequestMethod.GET])
     fun listHighscores(model: Model): String {
-        model["highscores"] = highscoreRepository.findAll()
+        model["highscores"] = highscoreRepository.findTop10ByOrderByScoreDesc()
 
         return "highscore"
     }
@@ -68,26 +75,31 @@ class QuizItController(val settingsRepository: SettingsRepository, val userRepos
     }
 
     @RequestMapping("/saveSettings",method = [RequestMethod.POST])
-    fun saveSettings(@ModelAttribute settings: Settings):String{
-        val auth = SecurityContextHolder.getContext().authentication
-        val user = userRepository.findByUsernameIgnoreCase(auth.name)
+    fun saveSettings(@ModelAttribute settings: Settings, model: Model):String{
+        try {
+            val auth = SecurityContextHolder.getContext().authentication
+            val user = userRepository.findByUsernameIgnoreCase(auth.name)
 
-        if (!settings.user?.username.isNullOrEmpty()) {
-            user.username = settings.user!!.username
-            userRepository.save(user)
-            val newAuth = UsernamePasswordAuthenticationToken(user.username, auth.credentials, auth.authorities)
-            SecurityContextHolder.getContext().authentication = newAuth
+            if (!settings.user?.username.isNullOrEmpty()) {
+                user.username = settings.user!!.username
+                userRepository.save(user)
+                val newAuth = UsernamePasswordAuthenticationToken(user.username, auth.credentials, auth.authorities)
+                SecurityContextHolder.getContext().authentication = newAuth
+            }
+
+            val usersettings = settingsRepository.findByUser(user)
+
+            if (usersettings != null) {
+                usersettings.categories = settings.categories
+                settingsRepository.save(usersettings)
+                System.out.println("-------------------Settings saved successfully---------")
+            } else {
+                System.out.println("-------------------No user found---------")
+            }
+        } catch (e: Exception) {
+            model["errorMessage"] = "That username is already taken!"
         }
 
-        val usersettings = settingsRepository.findByUser(user)
-
-        if (usersettings != null) {
-            usersettings.categories = settings.categories
-            settingsRepository.save(usersettings)
-            System.out.println("-------------------Settings saved successfully---------")
-        } else {
-            System.out.println("-------------------No user found---------")
-        }
 
         return "redirect:settings"
     }
@@ -115,7 +127,7 @@ class QuizItController(val settingsRepository: SettingsRepository, val userRepos
     @RequestMapping("/deleteUser",method = [RequestMethod.GET])
     fun deleteUser(): String {
         println("-------------------USER DELETED--------- ")
-        return "redirect:settings"
+        return "home"
     }
 
     @RequestMapping("/customQuiz", method = [RequestMethod.GET])
@@ -131,6 +143,11 @@ class QuizItController(val settingsRepository: SettingsRepository, val userRepos
     @RequestMapping("/get-register", method = [RequestMethod.POST])
     fun getRegister(username:String, password:String, email:String, model: Model): String  {
         userRepository.save(User(username = username, email = email, password = BCryptPasswordEncoder().encode(password) , role = UserRole.ROLE_USER))
+        val auth = SecurityContextHolder.getContext().authentication
+        val newAuthorities: MutableList<GrantedAuthority> = mutableListOf()
+        newAuthorities.add(SimpleGrantedAuthority(UserRole.ROLE_PREMIUM.toString()))
+        val newAuth = UsernamePasswordAuthenticationToken(username, auth.credentials, newAuthorities)
+        SecurityContextHolder.getContext().authentication = newAuth
         return  "redirect:login"
     }
 }

@@ -9,4 +9,5 @@ import org.springframework.stereotype.Repository
 @Repository
 interface UserRepository :JpaRepository<User, Int>{
     fun findByUsernameIgnoreCase( username: String?): User
+
 }

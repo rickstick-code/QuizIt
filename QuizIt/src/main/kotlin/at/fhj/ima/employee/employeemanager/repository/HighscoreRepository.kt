@@ -10,4 +10,8 @@ import org.springframework.stereotype.Repository
 @Repository
 interface HighscoreRepository :JpaRepository<Highscore, Int>{
     fun findByUser(user: User): Highscore
+
+    fun findTop10ByOrderByScoreDesc(): List<Highscore>
+
+    fun findAllByUser(user: User): List<Highscore>
 }
