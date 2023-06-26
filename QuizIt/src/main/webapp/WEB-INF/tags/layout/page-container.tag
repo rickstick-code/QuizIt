@@ -30,17 +30,19 @@
             </div>
             <div class="offcanvas-body">
                 <ul class="navbar-nav justify-content-start flex-grow-1 pe-3">
-                    <li class="nav-item">
+                    <li class="nav-item" style="white-space: nowrap;">
                         <a class="nav-link mx-1" href="/">Home</a>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item" style="white-space: nowrap;">
                         <a class="nav-link mx-1" href="/highscore">Highscore</a>
                     </li>
-                    <sec:authorize access="not hasAuthority('ROLE_ANONYMOUS')">
-                    <li class="nav-item">
+                    <sec:authorize access="hasAuthority('ROLE_PREMIUM')">
+                    <li class="nav-item" style="white-space: nowrap;">
                         <a class="nav-link mx-1" href="/customQuiz">Custom Quiz</a>
                     </li>
-                    <li class="nav-item">
+                    </sec:authorize>
+                    <sec:authorize access="not hasAuthority('ROLE_ANONYMOUS')">
+                    <li class="nav-item" style="white-space: nowrap;">
                         <a class="nav-link mx-1" href="/settings">Settings</a>
                     </li>
                     </sec:authorize>

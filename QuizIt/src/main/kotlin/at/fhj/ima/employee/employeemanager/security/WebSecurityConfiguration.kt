@@ -30,7 +30,11 @@ class WebSecurityConfiguration {
                 //.anyRequest().authenticated()
                 .anyRequest().permitAll()
                 .and()
-                .formLogin()//.loginPage("/login")
+                .formLogin()
+                    .defaultSuccessUrl("/") // Set /home as the default success URL after successful login
+                .and()
+                .logout()
+                .logoutSuccessUrl("/") // Set /home as the URL to redirect to after successful logout
                 .and()
                     .csrf()
                     .disable()

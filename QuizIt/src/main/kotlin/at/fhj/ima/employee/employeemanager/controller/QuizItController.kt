@@ -154,20 +154,23 @@ class QuizItController(val settingsRepository: SettingsRepository, val userRepos
         val newAuth = UsernamePasswordAuthenticationToken(username, auth.credentials, newAuthorities)
         SecurityContextHolder.getContext().authentication = newAuth
         return  "redirect:login"
+    }
 
 
+    @Secured("ROLE_ADMIN" , "ROLE_PREMIUM")
     @RequestMapping(path=["/customQuiz"], method = [RequestMethod.GET])
     fun customQuiz(model: Model,@RequestParam(required = false) customQuiz: CustomQuiz? = null): String {
         model["customQuiz"] = customQuizRepository.findAll()
         return "customQuiz"
     }
 
+    @Secured("ROLE_ADMIN" , "ROLE_PREMIUM")
     @RequestMapping("/customQuestion", method = [RequestMethod.GET])
     fun customQuestion(): String {
         return "customQuestion"
     }
 
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_ADMIN" , "ROLE_PREMIUM")
     @RequestMapping("/createQuiz", method = [RequestMethod.GET])
     fun createQuiz(model: Model, @RequestParam(required = false) id: Int?): String {
         val auth = SecurityContextHolder.getContext().authentication
@@ -185,7 +188,7 @@ class QuizItController(val settingsRepository: SettingsRepository, val userRepos
         return "createQuiz"
     }
 
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_ADMIN" , "ROLE_PREMIUM")
     @RequestMapping("/changeQuiz", method = [RequestMethod.POST])
     fun changeQuiz(@ModelAttribute @Valid customQuiz: CustomQuiz, bindingResult: BindingResult, model: Model): String {
         if(bindingResult.hasErrors()){

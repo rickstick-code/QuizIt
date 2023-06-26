@@ -21,7 +21,7 @@ import javax.validation.Valid
 @Controller
 class EmployeeController(val employeeRepository: EmployeeRepository, val departmentRepository: DepartmentRepository, val projectRepository: ProjectRepository) {
 
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_ADMIN" , "ROLE_PREMIUM")
     @RequestMapping("/editEmployee", method = [RequestMethod.GET])
     fun editEmployee(model: Model, @RequestParam(required = false) id: Int?): String {
         model["employee"] = if (id == null) Employee(dayOfBirth = LocalDate.now())
@@ -38,7 +38,7 @@ class EmployeeController(val employeeRepository: EmployeeRepository, val departm
         return "editEmployee"
     }
 
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_ADMIN" , "ROLE_PREMIUM")
     @RequestMapping("/changeEmployee", method = [RequestMethod.POST])
     fun changeEmployee(@ModelAttribute @Valid employee: Employee, bindingResult: BindingResult, model: Model): String {
         if(bindingResult.hasErrors()){
@@ -63,7 +63,7 @@ class EmployeeController(val employeeRepository: EmployeeRepository, val departm
         return "listEmployees"
     }
 
-    @Secured("ROLE_ADMIN")
+    @Secured("ROLE_ADMIN" , "ROLE_PREMIUM")
     @RequestMapping("/deleteEmployee", method = [RequestMethod.GET])
     fun deleteEmployee(model: Model, @RequestParam id: Int): String {
         val employee = employeeRepository.findById(id).get()
