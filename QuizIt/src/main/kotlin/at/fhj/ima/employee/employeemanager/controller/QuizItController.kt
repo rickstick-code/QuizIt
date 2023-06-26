@@ -4,8 +4,12 @@ import at.fhj.ima.employee.employeemanager.entity.Settings
 import at.fhj.ima.employee.employeemanager.entity.User
 import at.fhj.ima.employee.employeemanager.entity.UserRole
 import at.fhj.ima.employee.employeemanager.repository.HighscoreRepository
+import at.fhj.ima.employee.employeemanager.entity.*
+import at.fhj.ima.employee.employeemanager.repository.CustomQuizRepository
 import at.fhj.ima.employee.employeemanager.repository.SettingsRepository
 import at.fhj.ima.employee.employeemanager.repository.UserRepository
+import org.springframework.dao.DataIntegrityViolationException
+import org.springframework.security.access.annotation.Secured
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
@@ -17,10 +21,15 @@ import org.springframework.ui.set
 import org.springframework.web.bind.annotation.ModelAttribute
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
+import org.springframework.validation.BindingResult
+import org.springframework.web.bind.annotation.*
+import org.springframework.web.servlet.ModelAndView
+import java.time.LocalDate
+import javax.validation.Valid
 
 
 @Controller
-class QuizItController(val settingsRepository: SettingsRepository, val userRepository: UserRepository, val highscoreRepository : HighscoreRepository) {
+class QuizItController(val settingsRepository: SettingsRepository, val userRepository: UserRepository, val highscoreRepository : HighscoreRepository, val customQuizRepository: CustomQuizRepository) {
 
     @RequestMapping(path=["/", "/home"], method = [RequestMethod.GET])
     fun home(): String {
@@ -130,10 +139,6 @@ class QuizItController(val settingsRepository: SettingsRepository, val userRepos
         return "home"
     }
 
-    @RequestMapping("/customQuiz", method = [RequestMethod.GET])
-    fun customQuiz(): String {
-        return "customQuiz"
-    }
 
     @RequestMapping("/register", method = [RequestMethod.GET])
     fun register(): String {
@@ -149,5 +154,56 @@ class QuizItController(val settingsRepository: SettingsRepository, val userRepos
         val newAuth = UsernamePasswordAuthenticationToken(username, auth.credentials, newAuthorities)
         SecurityContextHolder.getContext().authentication = newAuth
         return  "redirect:login"
+
+
+    @RequestMapping(path=["/customQuiz"], method = [RequestMethod.GET])
+    fun customQuiz(model: Model,@RequestParam(required = false) customQuiz: CustomQuiz? = null): String {
+        model["customQuiz"] = customQuizRepository.findAll()
+        return "customQuiz"
+    }
+
+    @RequestMapping("/customQuestion", method = [RequestMethod.GET])
+    fun customQuestion(): String {
+        return "customQuestion"
+    }
+
+    @Secured("ROLE_ADMIN")
+    @RequestMapping("/createQuiz", method = [RequestMethod.GET])
+    fun createQuiz(model: Model, @RequestParam(required = false) id: Int?): String {
+        val auth = SecurityContextHolder.getContext().authentication
+        val user = userRepository.findByUsernameIgnoreCase(auth.name)
+        model.addAttribute("customQuiz", if (id == null) CustomQuiz(creator = user)
+        else customQuizRepository.findById(id).orElse(CustomQuiz(creator = user)))
+        if (id != null && (model.getAttribute("customQuiz") as CustomQuiz).id == null) {
+            model["errorMessage"] = "Quiz with id ${id} could not be found!"
+        }
+        return populateCreateCustomQuizView(model)
+    }
+
+    private fun populateCreateCustomQuizView(model: Model): String {
+
+        return "createQuiz"
+    }
+
+    @Secured("ROLE_ADMIN")
+    @RequestMapping("/changeQuiz", method = [RequestMethod.POST])
+    fun changeQuiz(@ModelAttribute @Valid customQuiz: CustomQuiz, bindingResult: BindingResult, model: Model): String {
+        if(bindingResult.hasErrors()){
+            return populateCreateCustomQuizView(model)
+        }
+        try {
+            for (q in customQuiz.customQuestions) {
+                q.motherQuiz = customQuiz
+            }
+
+            customQuizRepository.save(customQuiz)
+        } catch (e: DataIntegrityViolationException) {
+            model["errorMessage"] = "Could not store quiz, the quiz name already exists"
+            return populateCreateCustomQuizView(model)
+        } catch (e: Exception) {
+            model["errorMessage"] = e.message ?: "Could not store quiz"
+            return populateCreateCustomQuizView(model)
+        }
+        return  "redirect:customQuiz"
     }
 }

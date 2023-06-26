@@ -13,7 +13,7 @@
     <div class="row">
         <div class="col-md-8 col-md-offset-2">
             <c:set var="errors" value="${requestScope['org.springframework.validation.BindingResult.employee']}" />
-                 <%--@elvariable id="employee" type="at.fhj.ima.employee.employeemanager.entity.Employee"--%>
+                <%--@elvariable id="employee" type="at.fhj.ima.employee.employeemanager.entity.Employee"--%>
             <form:form modelAttribute="employee" method="post" action="changeEmployee">
 
                 <form:hidden path="id" />
