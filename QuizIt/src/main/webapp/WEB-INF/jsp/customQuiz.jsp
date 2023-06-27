@@ -55,7 +55,7 @@
                         <td>${customQuiz.creator.username}</td>
                         <td>
                             <div class="row">
-                                <a href="customQuestion.jsp?id=${customQuiz.id}" class="col btn btn-xs btn-success"><i class="bi bi-pen"></i>Play</a>
+                                <a href="customQuestion?id=${customQuiz.id}" class="col btn btn-xs btn-success"><i class="bi bi-pen"></i>Play</a>
                             </div>
                         </td>
                     </tr>

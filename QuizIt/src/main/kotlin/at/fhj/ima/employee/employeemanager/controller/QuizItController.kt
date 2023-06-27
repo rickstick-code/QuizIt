@@ -12,9 +12,11 @@ import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
 import org.springframework.validation.BindingResult
+import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.ModelAndView
 import java.time.LocalDate
+import javax.validation.ConstraintViolationException
 import javax.validation.Valid
 
 
@@ -87,12 +89,7 @@ class QuizItController(val settingsRepository: SettingsRepository, val userRepos
 
         return "redirect:settings"
     }
-/*
-    @RequestMapping("/customQuiz", method = [RequestMethod.GET])
-    fun customQuiz(): String {
-        return "customQuiz"
-    }
-    */
+
     @RequestMapping(path=["/customQuiz"], method = [RequestMethod.GET])
     fun customQuiz(model: Model,@RequestParam(required = false) customQuiz: CustomQuiz? = null): String {
         model["customQuiz"] = customQuizRepository.findAll()
@@ -100,7 +97,36 @@ class QuizItController(val settingsRepository: SettingsRepository, val userRepos
     }
 
     @RequestMapping("/customQuestion", method = [RequestMethod.GET])
-    fun customQuestion(): String {
+    fun customQuestion(model: Model, @RequestParam(required = true) id: Int?): String {
+    val customQuiz = id?.let { customQuizRepository.findById(it).orElse(null) }
+        if (customQuiz == null) {
+            model["customQuiz"] = customQuizRepository.findAll()
+            model.addAttribute("errorMessage", "Quiz with id $id could not be found!")
+            return "customQuiz"
+        }
+
+    model.addAttribute("customQuiz", customQuiz)
+    return populateCustomQuestion(model)
+    }
+
+    @Secured("ROLE_ADMIN" , "ROLE_PREMIUM")
+    @RequestMapping("/updateCustomScore", method = [RequestMethod.POST])
+    fun updateCustomScore(answer:String, selectedAnswer:String, model: Model): String  {
+        val auth = SecurityContextHolder.getContext().authentication
+
+        if(auth.authorities.first().authority != "ROLE_ANONYMOUS"){
+            val user = userRepository.findByUsernameIgnoreCase(auth.name)
+            if(answer == selectedAnswer){
+                user.currentCustomScore = user.currentCustomScore + 10
+            }
+            user.currentCustomQuestion = user.currentCustomQuestion + 1
+            userRepository.save(user)
+        }
+
+        return  "redirect:customQuestion"
+    }
+
+    private fun populateCustomQuestion(model: Model): String {
         return "customQuestion"
     }
 
@@ -118,7 +144,6 @@ class QuizItController(val settingsRepository: SettingsRepository, val userRepos
     }
 
     private fun populateCreateCustomQuizView(model: Model): String {
-
         return "createQuiz"
     }
 
@@ -135,7 +160,10 @@ class QuizItController(val settingsRepository: SettingsRepository, val userRepos
 
             customQuizRepository.save(customQuiz)
         } catch (e: DataIntegrityViolationException) {
-            model["errorMessage"] = "Could not store quiz, the quiz name already exists"
+            model["errorMessage"] = "Could not store quiz: The quiz name already exists"
+            return populateCreateCustomQuizView(model)
+        } catch (e: ConstraintViolationException){
+            model["errorMessage"] = "Could not store quiz: Please make sure all the fields are filled out"
             return populateCreateCustomQuizView(model)
         } catch (e: Exception) {
             model["errorMessage"] = e.message ?: "Could not store quiz"
