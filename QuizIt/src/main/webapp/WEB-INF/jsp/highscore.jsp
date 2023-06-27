@@ -34,7 +34,7 @@
         </div>
         <div class="row justify-content-center">
             <div class="col-md-4 d-grid">
-                <button class="btn-primary btn-lg btn mt-5">Download Highscores</button>
+                <a class="btn-primary btn-lg btn mt-5" type="btn" href="downloadHighscore">Download Highscores</a>
             </div>
         </div>
 
