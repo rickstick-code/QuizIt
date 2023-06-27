@@ -142,12 +142,16 @@ class QuizItController(val settingsRepository: SettingsRepository, val userRepos
             val logoutHandler = SecurityContextLogoutHandler()
             logoutHandler.logout(request, response, auth)
 
-            highscoreRepository.delete(highscoreRepository.findByUser(user)!!)
             settingsRepository.delete(settingsRepository.findByUser(user)!!)
+
+            for(highscore in highscoreRepository.findAllByUser(user)){
+                highscoreRepository.delete(highscore)
+            }
+
             userRepository.delete(user)
         }
 
-        return "home"
+        return "redirect:home"
     }
 
 
