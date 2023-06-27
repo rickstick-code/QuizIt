@@ -21,7 +21,7 @@
             </tr>
             <tr>
                 <td><a type="button" class="btn btn-primary btn-lg" href="/createQuiz">Create Quiz</a></td>
-                <td><a type="button" class="btn btn-primary btn-lg" href="/quiz">Random Quiz</a></td>
+                <td><a type="button" class="btn btn-primary btn-lg" href="customQuestion?id=${customQuiz[0].id}">Random Quiz</a></td>
             </tr>
         </table>
 
@@ -55,7 +55,7 @@
                         <td>${customQuiz.creator.username}</td>
                         <td>
                             <div class="row">
-                                <a href="customQuestion.jsp?id=${customQuiz.id}" class="col btn btn-xs btn-success"><i class="bi bi-pen"></i>Play</a>
+                                <a href="customQuestion?id=${customQuiz.id}" class="col btn btn-xs btn-success"><i class="bi bi-pen"></i>Play</a>
                             </div>
                         </td>
                     </tr>

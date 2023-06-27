@@ -20,6 +20,8 @@ class User(
         @Enumerated(EnumType.STRING)
         var role: UserRole,
         var currentScore: Int = 0, //for when a user is attempting a quiz
+        var currentCustomScore: Int = 0, //for when a user is attempting a custom quiz
+        var currentCustomQuestion: Int = 0, //for when a user is attempting a custom quiz
         @OneToMany(cascade = [CascadeType.REMOVE])
         var scores: List<Highscore> = listOf(),
         var active: Boolean = true
