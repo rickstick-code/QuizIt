@@ -21,19 +21,11 @@
             </tr>
             <tr>
                 <td><a type="button" class="btn btn-primary btn-lg" href="/createQuiz">Create Quiz</a></td>
-                <td><a type="button" class="btn btn-primary btn-lg" href="customQuestion?id=${customQuiz[0].id}">Random Quiz</a></td>
+                <td><a type="button" class="btn btn-primary btn-lg" href="/goToQuiz?id=${randomQuiz}">Random Quiz</a></td>
             </tr>
         </table>
 
         <div class="container text-center>
-            <form id="searchform">
-                <div class="row">
-                    <div class="col">
-                        <label for="inputSearch" class="form-label">Search</label>
-                        <input id="inputSearch" name="search" class="form-control" value="${param.search}"/>
-                    </div>
-                </div>
-            </form>
 
             <table data-toggle="table" class="table table-striped">
                 <thead>
@@ -55,7 +47,7 @@
                         <td>${customQuiz.creator.username}</td>
                         <td>
                             <div class="row">
-                                <a href="customQuestion?id=${customQuiz.id}" class="col btn btn-xs btn-success"><i class="bi bi-pen"></i>Play</a>
+                                <a href="goToQuiz?id=${customQuiz.id}" class="col btn btn-xs btn-success"><i class="bi bi-pen"></i>Play</a>
                             </div>
                         </td>
                     </tr>

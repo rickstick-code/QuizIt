@@ -27,17 +27,18 @@ import org.springframework.web.servlet.ModelAndView
 import java.time.LocalDate
 import javax.validation.ConstraintViolationException
 import javax.validation.Valid
+import kotlin.random.Random
 
 
 @Controller
 class QuizItController(val settingsRepository: SettingsRepository, val userRepository: UserRepository, val highscoreRepository : HighscoreRepository, val customQuizRepository: CustomQuizRepository) {
 
-    @RequestMapping(path=["/", "/home"], method = [RequestMethod.GET])
+    @RequestMapping(path = ["/", "/home"], method = [RequestMethod.GET])
     fun home(): String {
         val auth = SecurityContextHolder.getContext().authentication
 
-        if(auth.authorities.first().authority != "ROLE_ANONYMOUS") {
-            if(settingsRepository.findByUser(userRepository.findByUsernameIgnoreCase(auth.name)) == null){
+        if (auth.authorities.first().authority != "ROLE_ANONYMOUS") {
+            if (settingsRepository.findByUser(userRepository.findByUsernameIgnoreCase(auth.name)) == null) {
                 return "redirect:settings"
             }
         }
@@ -50,12 +51,13 @@ class QuizItController(val settingsRepository: SettingsRepository, val userRepos
 
         return "highscore"
     }
+
     @RequestMapping("/settings", method = [RequestMethod.GET])
     fun showSettings(model: Model): String {
         val auth = SecurityContextHolder.getContext().authentication
         val user = userRepository.findByUsernameIgnoreCase(auth.name)
 
-        if(auth.authorities.first().authority != "ROLE_ANONYMOUS") {
+        if (auth.authorities.first().authority != "ROLE_ANONYMOUS") {
             val usersettings = settingsRepository.findByUser(user)
 
             val categories = mutableListOf<String>()
@@ -84,8 +86,8 @@ class QuizItController(val settingsRepository: SettingsRepository, val userRepos
         return "settings"
     }
 
-    @RequestMapping("/saveSettings",method = [RequestMethod.POST])
-    fun saveSettings(@ModelAttribute settings: Settings, model: Model):String{
+    @RequestMapping("/saveSettings", method = [RequestMethod.POST])
+    fun saveSettings(@ModelAttribute settings: Settings, model: Model): String {
         try {
             val auth = SecurityContextHolder.getContext().authentication
             val user = userRepository.findByUsernameIgnoreCase(auth.name)
@@ -114,12 +116,12 @@ class QuizItController(val settingsRepository: SettingsRepository, val userRepos
         return "redirect:settings"
     }
 
-    @RequestMapping("/upgradeRole",method = [RequestMethod.GET])
-    fun upgradeRole(): String{
+    @RequestMapping("/upgradeRole", method = [RequestMethod.GET])
+    fun upgradeRole(): String {
         val auth = SecurityContextHolder.getContext().authentication
 
         System.out.println("-------------------BEFORE UPGRADE--------- " + auth.authorities)
-        if ( auth.authorities.size == 1) {
+        if (auth.authorities.size == 1) {
             val user = userRepository.findByUsernameIgnoreCase(auth.name)
             user.role = UserRole.ROLE_PREMIUM
             userRepository.save(user)
@@ -134,7 +136,7 @@ class QuizItController(val settingsRepository: SettingsRepository, val userRepos
         return "redirect:settings"
     }
 
-    @RequestMapping("/deleteUser",method = [RequestMethod.GET])
+    @RequestMapping("/deleteUser", method = [RequestMethod.GET])
     fun deleteUser(): String {
         println("-------------------USER DELETED--------- ")
         return "home"
@@ -147,36 +149,56 @@ class QuizItController(val settingsRepository: SettingsRepository, val userRepos
     }
 
     @RequestMapping("/get-register", method = [RequestMethod.POST])
-    fun getRegister(username:String, password:String, email:String, model: Model): String  {
-        userRepository.save(User(username = username, email = email, password = BCryptPasswordEncoder().encode(password) , role = UserRole.ROLE_USER))
+    fun getRegister(username: String, password: String, email: String, model: Model): String {
+        userRepository.save(
+            User(
+                username = username,
+                email = email,
+                password = BCryptPasswordEncoder().encode(password),
+                role = UserRole.ROLE_USER
+            )
+        )
         val auth = SecurityContextHolder.getContext().authentication
         val newAuthorities: MutableList<GrantedAuthority> = mutableListOf()
         newAuthorities.add(SimpleGrantedAuthority(UserRole.ROLE_PREMIUM.toString()))
         val newAuth = UsernamePasswordAuthenticationToken(username, auth.credentials, newAuthorities)
         SecurityContextHolder.getContext().authentication = newAuth
-        return  "redirect:login"
+        return "redirect:login"
     }
 
-    @Secured("ROLE_ADMIN" , "ROLE_PREMIUM")
-    @RequestMapping(path=["/customQuiz"], method = [RequestMethod.GET])
-    fun customQuiz(model: Model,@RequestParam(required = false) customQuiz: CustomQuiz? = null): String {
-        model["customQuiz"] = customQuizRepository.findAll()
+    @Secured("ROLE_ADMIN", "ROLE_PREMIUM")
+    @RequestMapping(path = ["/customQuiz"], method = [RequestMethod.GET])
+    fun customQuiz(model: Model, @RequestParam(required = false) customQuiz: CustomQuiz? = null): String {
+        val quizzes = customQuizRepository.findAll()
+        model["customQuiz"] = quizzes
+        model["randomQuiz"] = quizzes[Random.nextInt(0, quizzes.size)].id!!
         return "customQuiz"
     }
-    /*
-        @RequestMapping("/customQuestion", method = [RequestMethod.GET])
-        fun customQuestion(model: Model, @RequestParam(required = true) id: Int?): String {
-        val customQuiz = id?.let { customQuizRepository.findById(it).orElse(null) }
-            if (customQuiz == null) {
-                model["customQuiz"] = customQuizRepository.findAll()
-                model.addAttribute("errorMessage", "Quiz with id $id could not be found!")
-                return "customQuiz"
-            }
 
-        model.addAttribute("customQuiz", customQuiz)
-        return populateCustomQuestion(model)
-        }
-    */
+    @Secured("ROLE_ADMIN", "ROLE_PREMIUM")
+    @RequestMapping(path = ["/customScore"], method = [RequestMethod.GET])
+    fun customScore(model: Model, @RequestParam(required = true) id: Int?): String {
+        val auth = SecurityContextHolder.getContext().authentication
+        val user = userRepository.findByUsernameIgnoreCase(auth.name)
+        val customQuiz = id?.let { customQuizRepository.findById(it).orElse(null) }
+        model["resultScore"] = user.currentCustomScore
+        model["maxScore"] = (customQuiz?.customQuestions?.size!! * 10)
+        user.currentCustomScore = 0
+        userRepository.save(user)
+        return "customScore"
+    }
+
+    @Secured("ROLE_ADMIN", "ROLE_PREMIUM")
+    @RequestMapping("/goToQuiz", method = [RequestMethod.GET])
+    fun goToQuiz(model: Model, @RequestParam(required = true) id: Int?): String {
+        val auth = SecurityContextHolder.getContext().authentication
+        val user = userRepository.findByUsernameIgnoreCase(auth.name)
+        user.currentCustomQuestion = 0
+        user.currentCustomScore = 0
+        userRepository.save(user)
+        return "redirect:/customQuestion?id=$id"
+    }
+
     @Secured("ROLE_ADMIN" , "ROLE_PREMIUM")
     @RequestMapping("/customQuestion", method = [RequestMethod.GET])
     fun customQuestion(model: Model, @RequestParam(required = true) id: Int?): String {
@@ -190,6 +212,8 @@ class QuizItController(val settingsRepository: SettingsRepository, val userRepos
             model.addAttribute("errorMessage", "Quiz with id $id could not be found!")
             return "customQuiz"
         }
+
+        model["customQuizId"] = customQuiz.id!!
 
         System.out.println("----------------------------------------------")
         System.out.println("Question:   " + customQuiz.customQuestions[user.currentCustomQuestion].question)
@@ -210,28 +234,33 @@ class QuizItController(val settingsRepository: SettingsRepository, val userRepos
         System.out.println("User:       " + auth.name)
         System.out.println("----------------------------------------------")
 
-        model["userscore"] = user.currentCustomScore
 
         return "customQuestion"
     }
 
     @Secured("ROLE_ADMIN" , "ROLE_PREMIUM")
     @RequestMapping("/updateCustomScore", method = [RequestMethod.POST])
-    fun updateCustomScore(answer:String, selectedAnswer:String, model: Model): String  {
+    fun updateCustomScore(answer:String, selectedAnswer:String, model: Model, @RequestParam(required = true) id: Int?): String  {
         val auth = SecurityContextHolder.getContext().authentication
-
         val user = userRepository.findByUsernameIgnoreCase(auth.name)
+        val customQuiz = id?.let { customQuizRepository.findById(it).orElse(null) }
         if(answer == selectedAnswer){
             user.currentCustomScore = user.currentCustomScore + 10
         }
-        user.currentCustomQuestion = user.currentCustomQuestion + 1
+        if(user.currentCustomQuestion < (customQuiz?.customQuestions?.size!!-1)){
+            user.currentCustomQuestion = user.currentCustomQuestion + 1
+        } else {
+            user.currentCustomQuestion = 0
+            userRepository.save(user)
+            return "redirect:/customScore?id=$id"
+        }
+        System.out.println(user.currentCustomQuestion)
         userRepository.save(user)
-
-        return  populateCustomQuestion(model)
+        return  populateCustomQuestion(model, id)
     }
 
-    private fun populateCustomQuestion(model: Model): String {
-        return "customQuestion"
+    private fun populateCustomQuestion(model: Model, @RequestParam(required = true) id: Int?): String {
+        return "redirect:/customQuestion?id=$id"
     }
 
     @Secured("ROLE_ADMIN" , "ROLE_PREMIUM")
