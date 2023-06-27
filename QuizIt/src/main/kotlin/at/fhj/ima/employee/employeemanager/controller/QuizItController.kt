@@ -12,6 +12,7 @@ import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
@@ -22,6 +23,7 @@ import java.io.IOException
 import javax.servlet.http.HttpServletRequest
 import javax.servlet.http.HttpServletResponse
 import javax.validation.Valid
+
 
 
 @Controller
@@ -130,8 +132,21 @@ class QuizItController(val settingsRepository: SettingsRepository, val userRepos
     }
 
     @RequestMapping("/deleteUser",method = [RequestMethod.GET])
-    fun deleteUser(): String {
-        println("-------------------USER DELETED--------- ")
+    fun deleteUser(model: Model, request: HttpServletRequest, response: HttpServletResponse,): String {
+        val auth = SecurityContextHolder.getContext().authentication
+
+        if(auth.authorities.first().authority != "ROLE_ANONYMOUS") {
+            val user = userRepository.findByUsernameIgnoreCase(auth.name)
+
+            // Log out the user
+            val logoutHandler = SecurityContextLogoutHandler()
+            logoutHandler.logout(request, response, auth)
+
+            highscoreRepository.delete(highscoreRepository.findByUser(user)!!)
+            settingsRepository.delete(settingsRepository.findByUser(user)!!)
+            userRepository.delete(user)
+        }
+
         return "home"
     }
 
