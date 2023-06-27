@@ -9,8 +9,9 @@
     <div class="container text-center">
         <div class="container">
             <div class="row justify-content-center">
-                <div class="col-md-6 text-center">
+                <div class="col-md-4 text-center">
                     <h1 class="mt-5">Please sign in here:</h1>
+                    <br>
                     <!-- Sign-in Form -->
                     <form action="/get-register" method="post">
                         <div class="form-group">

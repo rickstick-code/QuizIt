@@ -52,7 +52,7 @@
                         <a class="btn btn-outline-light" href="/login"><i class="bi bi-box-arrow-right"></i> Login</a>
                     </li>
                     <li class="nav-item" style="white-space: nowrap;">
-                        <a class="btn btn-outline-light" href="/register"><i class="bi bi-box-arrow-right"></i> Sign-in</a>
+                        <a class="btn btn-outline-light" href="/register"><i class="bi bi-plus-square"></i> Register</a>
                     </li>
                     </sec:authorize>
                 </ul>

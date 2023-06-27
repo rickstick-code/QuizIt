@@ -25,7 +25,7 @@
             </tr>
         </table>
 
-        <div class="container text-center>
+        <div class="container text-center">
 
             <table data-toggle="table" class="table table-striped">
                 <thead>
