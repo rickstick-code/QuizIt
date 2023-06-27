@@ -8,6 +8,7 @@ enum class UserRole {
         ROLE_ADMIN
 }
 @Entity
+
 class User(
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
