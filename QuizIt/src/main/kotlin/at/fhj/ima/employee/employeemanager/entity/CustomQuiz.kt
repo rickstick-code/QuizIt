@@ -12,7 +12,7 @@ class CustomQuiz(
     @Column(nullable = true, unique = true)
     @field:Size(min = 2, max = 240)
     var quizname: String = "",
-    @OneToMany(cascade= [CascadeType.ALL])
+    @OneToMany(cascade= [CascadeType.REFRESH,CascadeType.DETACH,CascadeType.DETACH,CascadeType.MERGE,CascadeType.PERSIST])
     var customQuestions: MutableList<CustomQuestion> = mutableListOf(),
     @ManyToOne
     var creator: User? = null

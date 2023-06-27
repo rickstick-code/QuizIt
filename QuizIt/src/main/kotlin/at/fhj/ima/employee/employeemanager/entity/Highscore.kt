@@ -14,7 +14,7 @@ class Highscore(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Int? = null,
     var score: Int? = null,
-    @ManyToOne(cascade = [CascadeType.REMOVE])
+    @ManyToOne
     var user: User? = null
 ) {
 }

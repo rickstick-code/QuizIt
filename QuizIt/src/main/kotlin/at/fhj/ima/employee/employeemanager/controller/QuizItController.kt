@@ -15,16 +15,21 @@ import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.ui.set
+import org.springframework.util.FileCopyUtils
 import org.springframework.web.bind.annotation.ModelAttribute
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestMethod
 import org.springframework.validation.BindingResult
 import org.springframework.web.bind.annotation.*
 import org.springframework.web.servlet.ModelAndView
+import java.io.IOException
 import java.time.LocalDate
+import javax.servlet.http.HttpServletRequest
+import javax.servlet.http.HttpServletResponse
 import javax.validation.ConstraintViolationException
 import javax.validation.Valid
 import kotlin.random.Random
@@ -136,10 +141,27 @@ class QuizItController(val settingsRepository: SettingsRepository, val userRepos
         return "redirect:settings"
     }
 
-    @RequestMapping("/deleteUser", method = [RequestMethod.GET])
-    fun deleteUser(): String {
-        println("-------------------USER DELETED--------- ")
-        return "home"
+    @RequestMapping("/deleteUser",method = [RequestMethod.GET])
+    fun deleteUser(model: Model, request: HttpServletRequest, response: HttpServletResponse,): String {
+        val auth = SecurityContextHolder.getContext().authentication
+
+        if(auth.authorities.first().authority != "ROLE_ANONYMOUS") {
+            val user = userRepository.findByUsernameIgnoreCase(auth.name)
+
+            // Log out the user
+            val logoutHandler = SecurityContextLogoutHandler()
+            logoutHandler.logout(request, response, auth)
+
+            settingsRepository.delete(settingsRepository.findByUser(user)!!)
+
+            for(highscore in highscoreRepository.findAllByUser(user)){
+                highscoreRepository.delete(highscore)
+            }
+
+            userRepository.delete(user)
+        }
+
+        return "redirect:home"
     }
 
 
@@ -171,7 +193,11 @@ class QuizItController(val settingsRepository: SettingsRepository, val userRepos
     fun customQuiz(model: Model, @RequestParam(required = false) customQuiz: CustomQuiz? = null): String {
         val quizzes = customQuizRepository.findAll()
         model["customQuiz"] = quizzes
-        model["randomQuiz"] = quizzes[Random.nextInt(0, quizzes.size)].id!!
+        model["randomQuiz"] = "/quiz"
+        if(!quizzes.isNullOrEmpty()){
+            model["randomQuiz"] = "/goToQuiz?id=" + quizzes[Random.nextInt(0, quizzes.size)].id.toString()
+        }
+
         return "customQuiz"
     }
 
@@ -303,5 +329,24 @@ class QuizItController(val settingsRepository: SettingsRepository, val userRepos
             return populateCreateCustomQuizView(model)
         }
         return  "redirect:customQuiz"
+    }
+
+    @RequestMapping("/downloadHighscore")
+    fun downloadHighscore(response: HttpServletResponse, request: HttpServletRequest?) {
+        //jsonPersonal is the string that you're going to create dynamically in your code
+        var highscoreList = "A list of the Top10 Highscores: \n"
+        val highscore = highscoreRepository.findTop10ByOrderByScoreDesc()
+        for (line in highscore){
+            highscoreList += "Score: " + line.score + ", User: " + line.user!!.username + "\n"
+        }
+        response.characterEncoding = "UTF-8"
+        response.setHeader("Content-Transfer-Encoding", "binary")
+        response.contentType = "text/plain"
+        response.setContentLength(highscoreList.length)
+        response.setHeader("Content-Disposition", "attachment")
+
+        //this copies the content of your string to the output stream
+        FileCopyUtils.copy(highscoreList.toByteArray(),response.outputStream)
+        response.flushBuffer()
     }
 }

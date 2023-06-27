@@ -21,7 +21,7 @@
             </tr>
             <tr>
                 <td><a type="button" class="btn btn-primary btn-lg" href="/createQuiz">Create Quiz</a></td>
-                <td><a type="button" class="btn btn-primary btn-lg" href="/goToQuiz?id=${randomQuiz}">Random Quiz</a></td>
+                <td><a type="button" class="btn btn-primary btn-lg" href="${randomQuiz}">Random Quiz</a></td>
             </tr>
         </table>
 
